@@ -21,6 +21,7 @@ import { usePathname } from 'next/navigation';
 import { signOut } from 'firebase/auth';
 import { auth } from '@/lib/firebase/firebase';
 import { AI_Chatbot } from '@/components/student/ai-chatbot';
+import { DailySupportQuestion } from '@/components/student/daily-support-question';
 
 const studentNavItems = [
   { href: '/student/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
@@ -114,6 +115,7 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
         <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6 bg-background relative">
           {children}
           <AI_Chatbot />
+          <DailySupportQuestion />
         </main>
       </div>
     </div>
