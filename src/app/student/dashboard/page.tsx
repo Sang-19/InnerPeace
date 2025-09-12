@@ -1,5 +1,4 @@
 import { DailyCheckIn } from "@/components/student/daily-check-in";
-import { DailySupportQuestion } from "@/components/student/daily-support-question";
 import { EmergencyAlertButton } from "@/components/student/emergency-alert-button";
 import { WeeklyMoodGraph } from "@/components/student/weekly-mood-graph";
 import { Button } from "@/components/ui/button";
@@ -20,7 +19,6 @@ export default function StudentDashboard() {
 
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2 space-y-6">
-          <DailySupportQuestion />
           <Card>
             <CardHeader>
               <CardTitle>Weekly Mood</CardTitle>
@@ -32,7 +30,7 @@ export default function StudentDashboard() {
           </Card>
         </div>
         <div className="lg:col-span-1 space-y-6">
-          {/* The DailyCheckIn component can be removed as the quiz handles mood submission now */}
+           <DailyCheckIn />
            <Card>
             <CardHeader>
               <CardTitle>Quick Access</CardTitle>
