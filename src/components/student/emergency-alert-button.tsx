@@ -34,6 +34,7 @@ export function EmergencyAlertButton() {
     const formData = new FormData();
     formData.append('studentId', appUser.uid);
     formData.append('studentName', appUser.name);
+    formData.append('studentEmail', appUser.email);
     
     const result = await sendEmergencyAlert(formData);
 

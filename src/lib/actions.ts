@@ -9,9 +9,10 @@ import { analyzeCommunityReport } from '@/ai/flows/community-report-analysis';
 export async function sendEmergencyAlert(formData: FormData) {
   const studentId = formData.get('studentId') as string;
   const studentName = formData.get('studentName') as string;
+  const studentEmail = formData.get('studentEmail') as string;
   const message = formData.get('message') as string;
 
-  if (!studentId || !studentName) {
+  if (!studentId || !studentName || !studentEmail) {
     return { error: 'User information is missing.' };
   }
 
@@ -19,8 +20,9 @@ export async function sendEmergencyAlert(formData: FormData) {
     await addDoc(collection(db, 'alerts'), {
       studentId,
       studentName,
+      studentEmail,
       message: message || 'Urgent assistance requested.',
-      date: serverTimestamp(),
+      timestamp: serverTimestamp(),
       status: 'pending',
     });
     return { success: 'Alert sent successfully.' };

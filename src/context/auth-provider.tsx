@@ -20,7 +20,7 @@ export const AuthContext = createContext<AuthContextType>({
   loading: true,
 });
 
-const publicRoutes = ['/', '/signup'];
+const publicRoutes = ['/', '/signup', '/signin'];
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -39,12 +39,24 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         if (userDoc.exists()) {
           const userData = userDoc.data() as AppUser;
           setAppUser(userData);
-          if (publicRoutes.includes(pathname)) {
-             router.push(userData.role === 'admin' ? '/admin/dashboard' : '/student/dashboard');
+          
+          const isAdmin = userData.role === 'admin';
+          const isStudent = userData.role === 'student';
+
+          const onAdminPath = pathname.startsWith('/admin');
+          const onStudentPath = pathname.startsWith('/student');
+
+          if (isAdmin && !onAdminPath) {
+            router.push('/admin/dashboard');
+          } else if (isStudent && !onStudentPath) {
+            router.push('/student/dashboard');
           }
         } else {
-          // New user, potentially during signup process
+          // New user, not in Firestore yet.
           setAppUser(null);
+           if (!publicRoutes.includes(pathname)) {
+            router.push('/');
+          }
         }
       } else {
         setUser(null);

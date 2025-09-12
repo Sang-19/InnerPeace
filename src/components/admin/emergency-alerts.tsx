@@ -1,59 +1,81 @@
-
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
 import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
 import { db } from '@/lib/firebase/firebase';
-import { EmergencyAlert } from '@/lib/types';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Mail, User } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
+import { AppUser } from '@/lib/types';
+
+interface Alert {
+  id: string;
+  studentName: string;
+  studentEmail: string;
+  timestamp: Date;
+}
 
 export function EmergencyAlerts() {
-  const [alerts, setAlerts] = useState<EmergencyAlert[]>([]);
+  const [alerts, setAlerts] = useState<Alert[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const q = query(collection(db, 'alerts'), orderBy('date', 'desc'));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const alertsData = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as EmergencyAlert[];
+    const q = query(collection(db, 'alerts'), orderBy('timestamp', 'desc'));
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const alertsData: Alert[] = [];
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        alertsData.push({
+          id: doc.id,
+          studentName: data.studentName,
+          studentEmail: data.studentEmail,
+          timestamp: data.timestamp.toDate(),
+        } as Alert);
+      });
       setAlerts(alertsData);
+      setLoading(false);
     });
 
     return () => unsubscribe();
   }, []);
 
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-40">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Emergency Alerts</CardTitle>
-      </CardHeader>
-      <CardContent>
-        {alerts.length === 0 ? (
-          <p className="text-muted-foreground">No new alerts.</p>
-        ) : (
-          <ul className="space-y-4">
-            {alerts.map((alert) => (
-              <li key={alert.id} className="rounded-lg bg-destructive/10 p-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <User className="h-4 w-4" />
-                    <span className="font-semibold">{alert.studentName}</span>
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    {new Date(alert.date.seconds * 1000).toLocaleString()}
-                  </div>
-                </div>
-                <div className="mt-2 flex items-center gap-2">
-                  <Mail className="h-4 w-4" />
-                  <span>{alert.message}</span>
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
-      </CardContent>
-    </Card>
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Student Name</TableHead>
+          <TableHead>Student Email</TableHead>
+          <TableHead>Time</TableHead>
+          <TableHead>Status</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {alerts.map((alert) => (
+          <TableRow key={alert.id}>
+            <TableCell>{alert.studentName}</TableCell>
+            <TableCell>{alert.studentEmail}</TableCell>
+            <TableCell>{alert.timestamp.toLocaleString()}</TableCell>
+            <TableCell>
+              <Badge variant="destructive">Needs Action</Badge>
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
   );
 }
