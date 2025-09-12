@@ -75,7 +75,7 @@ export type EmergencyAlert = {
   studentId: string;
   studentName: string;
   message: string;
-  date: Date;
+  date: { seconds: number; nanoseconds: number; };
   status: 'pending' | 'resolved';
 };
 
