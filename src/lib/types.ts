@@ -36,6 +36,15 @@ export type Admin = AppUser & {
   role: 'admin';
 };
 
+export type CommunityMessage = {
+  id: string;
+  senderId: string;
+  message: string;
+  timestamp: Date;
+  isHarmful: boolean;
+  status: 'visible' | 'hidden' | 'reported';
+};
+
 export type CommunityReport = {
   id: string;
   studentId: string;
@@ -43,6 +52,7 @@ export type CommunityReport = {
   message: string;
   date: Date;
   status: 'pending' | 'reviewed';
+  messageId: string;
 };
 
 export type Feedback = {

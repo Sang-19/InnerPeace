@@ -10,6 +10,7 @@ import {
   Settings,
   LogOut,
   PanelLeft,
+  MessageCircle,
 } from 'lucide-react';
 import { Logo } from '@/components/shared/logo';
 import { UserNav } from '@/components/shared/user-nav';
@@ -24,6 +25,7 @@ import { AI_Chatbot } from '@/components/student/ai-chatbot';
 const studentNavItems = [
   { href: '/student/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
   { href: '/student/journal', icon: Book, label: 'Journal' },
+  { href: '/student/community', icon: MessageCircle, label: 'Community' },
   { href: '/student/relaxation', icon: HeartPulse, label: 'Relaxation' },
   { href: '/student/helpline', icon: Phone, label: 'Helpline' },
   { href: '/student/settings', icon: Settings, label: 'Settings' },
