@@ -1,0 +1,53 @@
+
+{
+    "guides": [
+        {
+            "id": "breathing-1",
+            "title": "Box Breathing",
+            "description": "A simple technique to calm your nervous system.",
+            "type": "breathing",
+            "duration": 5,
+            "imageId": "breathing-exercise",
+            "steps": [
+                "Sit comfortably with your back straight.",
+                "Inhale slowly through your nose for a count of 4.",
+                "Hold your breath for a count of 4.",
+                "Exhale slowly through your mouth for a count of 4.",
+                "Hold your breath for a count of 4.",
+                "Repeat for 5-10 minutes."
+            ]
+        },
+        {
+            "id": "meditation-1",
+            "title": "Mindful Observation",
+            "description": "A guided meditation to bring awareness to the present moment.",
+            "type": "meditation",
+            "duration": 10,
+            "imageId": "meditation-guide",
+            "steps": [
+                "Find a quiet place to sit or lie down.",
+                "Close your eyes and take a few deep breaths.",
+                "Bring your attention to the sounds around you. Notice them without judgment.",
+                "Shift your attention to the physical sensations in your body.",
+                "Focus on your breath, feeling the rise and fall of your chest.",
+                "If your mind wanders, gently guide it back to your breath.",
+                "Continue for 10-15 minutes."
+            ]
+        },
+        {
+            "id": "yoga-1",
+            "title": "Gentle Morning Stretches",
+            "description": "A sequence of simple yoga poses to start your day.",
+            "type": "yoga",
+            "duration": 15,
+            "imageId": "yoga-guide",
+            "steps": [
+                "Start with Cat-Cow pose to warm up your spine.",
+                "Move into Downward-Facing Dog, pedaling your feet.",
+                "Step forward into a low lunge on each side.",
+                "Come to a seated position and do a gentle spinal twist.",
+                "Finish with a few moments in Child's Pose."
+            ]
+        }
+    ]
+}

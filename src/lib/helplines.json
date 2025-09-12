@@ -1,0 +1,29 @@
+
+{
+    "helplines": [
+        {
+            "id": "1",
+            "name": "National Suicide Prevention Lifeline",
+            "contact": "988",
+            "type": "phone"
+        },
+        {
+            "id": "2",
+            "name": "Crisis Text Line",
+            "contact": "Text HOME to 741741",
+            "type": "chat"
+        },
+        {
+            "id": "3",
+            "name": "The Trevor Project (for LGBTQ youth)",
+            "contact": "1-866-488-7386",
+            "type": "phone"
+        },
+        {
+            "id": "4",
+            "name": "University Counseling Center",
+            "contact": "counseling@university.edu",
+            "type": "email"
+        }
+    ]
+}

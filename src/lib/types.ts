@@ -11,7 +11,7 @@ export type MoodLog = {
 
 export type JournalEntry = {
   id: string;
-  date: Date;
+  date: { seconds: number, nanoseconds: number };
   content: string;
   userId: string;
 };
@@ -40,7 +40,7 @@ export type CommunityMessage = {
   id: string;
   senderId: string;
   message: string;
-  timestamp: Date;
+  timestamp: { seconds: number, nanoseconds: number };
   isHarmful: boolean;
   status: 'visible' | 'hidden' | 'reported';
 };

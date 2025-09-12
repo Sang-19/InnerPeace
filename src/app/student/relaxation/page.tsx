@@ -1,0 +1,90 @@
+'use client';
+
+import Image from 'next/image';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Clock, Leaf, Wind } from 'lucide-react';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
+import relaxationData from '@/lib/relaxation-guides.json';
+import type { RelaxationGuide } from '@/lib/types';
+
+export default function RelaxationPage() {
+  const guides: RelaxationGuide[] = relaxationData.guides;
+
+  const getIcon = (type: RelaxationGuide['type']) => {
+    switch (type) {
+      case 'breathing':
+        return <Wind className="h-5 w-5 text-primary" />;
+      case 'meditation':
+        return <Leaf className="h-5 w-5 text-primary" />;
+      case 'yoga':
+        return <Leaf className="h-5 w-5 text-primary" />; // Using Leaf for yoga too
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+       <Card className="bg-primary/10 border-primary/20">
+        <CardHeader>
+          <CardTitle>Find Your Calm</CardTitle>
+          <CardDescription>
+            Explore these guided exercises to relax your mind and body.
+          </CardDescription>
+        </CardHeader>
+      </Card>
+      
+      <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2">
+        {guides.map((guide) => {
+          const guideImage = PlaceHolderImages.find((p) => p.id === guide.imageId);
+          return (
+            <Card key={guide.id} className="overflow-hidden">
+              {guideImage && (
+                <div className="relative h-48 w-full">
+                  <Image
+                    src={guideImage.imageUrl}
+                    alt={guide.title}
+                    fill
+                    className="object-cover"
+                    data-ai-hint={guideImage.imageHint}
+                  />
+                </div>
+              )}
+              <CardHeader>
+                <div className="flex items-center gap-3">
+                  {getIcon(guide.type)}
+                  <CardTitle>{guide.title}</CardTitle>
+                </div>
+                <CardDescription>{guide.description}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center text-sm text-muted-foreground mb-4">
+                  <Clock className="mr-2 h-4 w-4" />
+                  <span>{guide.duration} minutes</span>
+                </div>
+                <Accordion type="single" collapsible>
+                  <AccordionItem value="steps">
+                    <AccordionTrigger>Show Steps</AccordionTrigger>
+                    <AccordionContent>
+                      <ul className="list-decimal list-inside space-y-2 pl-2">
+                        {guide.steps.map((step, index) => (
+                          <li key={index}>{step}</li>
+                        ))}
+                      </ul>
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
+              </CardContent>
+            </Card>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
