@@ -1,9 +1,9 @@
 'use server';
 
 /**
- * @fileOverview Generates personalized daily support questions for students using GenAI.
+ * @fileOverview Generates a personalized daily support quiz for students using GenAI.
  *
- * - generatePersonalizedQuestion - A function that generates a personalized support question.
+ * - generatePersonalizedQuestion - A function that generates a personalized support quiz.
  * - PersonalizedQuestionInput - The input type for the generatePersonalizedQuestion function.
  * - PersonalizedQuestionOutput - The return type for the generatePersonalizedQuestion function.
  */
@@ -13,12 +13,19 @@ import {z} from 'genkit';
 
 const PersonalizedQuestionInputSchema = z.object({
   studentName: z.string().describe('The name of the student.'),
-  mood: z.string().describe('The current mood of the student (e.g., Happy, Neutral, Sad, Anxious, Angry).'),
 });
 export type PersonalizedQuestionInput = z.infer<typeof PersonalizedQuestionInputSchema>;
 
+const QuizQuestionSchema = z.object({
+    question: z.string(),
+    options: z.array(z.object({
+        text: z.string(),
+        mood: z.enum(['Happy', 'Neutral', 'Sad', 'Anxious', 'Angry']),
+    })).length(4),
+});
+
 const PersonalizedQuestionOutputSchema = z.object({
-  question: z.string().describe('A personalized support question for the student.'),
+  questions: z.array(QuizQuestionSchema).max(3).describe('A short quiz of up to 3 questions.'),
 });
 export type PersonalizedQuestionOutput = z.infer<typeof PersonalizedQuestionOutputSchema>;
 
@@ -30,12 +37,11 @@ const prompt = ai.definePrompt({
   name: 'personalizedQuestionPrompt',
   input: {schema: PersonalizedQuestionInputSchema},
   output: {schema: PersonalizedQuestionOutputSchema},
-  prompt: `You are a mental health support assistant. Your goal is to provide a single personalized support question to the student based on their name and current mood.
+  prompt: `You are a mental health support assistant. Your goal is to generate a short, personalized daily quiz for a student to help them reflect on their feelings. The quiz should have a maximum of 3 multiple-choice questions. Each question must have exactly 4 options, and each option must be tied to one of the following moods: 'Happy', 'Neutral', 'Sad', 'Anxious', 'Angry'.
 
 Student Name: {{{studentName}}}
-Current Mood: {{{mood}}}
 
-Personalized Support Question:`, 
+Generate the quiz questions and options.`,
 });
 
 const personalizedQuestionFlow = ai.defineFlow(

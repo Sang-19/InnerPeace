@@ -32,7 +32,7 @@ export default function StudentDashboard() {
           </Card>
         </div>
         <div className="lg:col-span-1 space-y-6">
-          <DailyCheckIn />
+          {/* The DailyCheckIn component can be removed as the quiz handles mood submission now */}
            <Card>
             <CardHeader>
               <CardTitle>Quick Access</CardTitle>
