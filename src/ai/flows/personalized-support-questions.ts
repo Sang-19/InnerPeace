@@ -39,6 +39,8 @@ const prompt = ai.definePrompt({
   output: {schema: PersonalizedQuestionOutputSchema},
   prompt: `You are a mental health support assistant. Your goal is to generate a short, personalized daily quiz for a student to help them reflect on their feelings. The quiz should have a maximum of 3 multiple-choice questions. Each question must have exactly 4 options, and each option must be tied to one of the following moods: 'Happy', 'Neutral', 'Sad', 'Anxious', 'Angry'.
 
+It is critical that the 'mood' field for each option is ONLY one of the five allowed values.
+
 Student Name: {{{studentName}}}
 
 Generate the quiz questions and options.`,
