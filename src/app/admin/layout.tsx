@@ -31,6 +31,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { signOut } from 'firebase/auth';
 import { auth } from '@/lib/firebase/firebase';
+import { useEffect } from 'react';
 
 const adminNavItems = [
   { href: '/admin/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
@@ -45,17 +46,18 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const router = useRouter();
   const pathname = usePathname();
 
-  if (loading) {
+  useEffect(() => {
+    if (!loading && (!appUser || appUser.role !== 'admin')) {
+      router.push('/');
+    }
+  }, [appUser, loading, router]);
+
+  if (loading || !appUser || appUser.role !== 'admin') {
     return (
       <div className="flex h-screen items-center justify-center">
         <p>Loading...</p>
       </div>
     );
-  }
-
-  if (!appUser || appUser.role !== 'admin') {
-    router.push('/');
-    return null;
   }
   
   const handleLogout = async () => {
