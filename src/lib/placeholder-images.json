@@ -1,3 +1,46 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "login-image",
+      "description": "A calming abstract image for the login page.",
+      "imageUrl": "https://picsum.photos/seed/1/1920/1080",
+      "imageHint": "calm abstract"
+    },
+    {
+      "id": "breathing-exercise",
+      "description": "Image for a breathing exercise guide.",
+      "imageUrl": "https://picsum.photos/seed/2/800/600",
+      "imageHint": "yoga breathing"
+    },
+    {
+      "id": "meditation-guide",
+      "description": "Image for a meditation guide.",
+      "imageUrl": "https://picsum.photos/seed/3/800/600",
+      "imageHint": "meditation nature"
+    },
+    {
+      "id": "yoga-guide",
+      "description": "Image for a yoga guide.",
+      "imageUrl": "https://picsum.photos/seed/4/800/600",
+      "imageHint": "yoga pose"
+    },
+    {
+      "id": "user-avatar-1",
+      "description": "Avatar for user 1.",
+      "imageUrl": "https://picsum.photos/seed/101/40/40",
+      "imageHint": "person portrait"
+    },
+    {
+      "id": "user-avatar-2",
+      "description": "Avatar for user 2.",
+      "imageUrl": "https://picsum.photos/seed/102/40/40",
+      "imageHint": "person portrait"
+    },
+    {
+      "id": "user-avatar-3",
+      "description": "Avatar for user 3.",
+      "imageUrl": "https://picsum.photos/seed/103/40/40",
+      "imageHint": "person portrait"
+    }
+  ]
 }
