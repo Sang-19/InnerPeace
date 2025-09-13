@@ -47,6 +47,7 @@ export async function addJournalEntry(formData: FormData) {
         revalidatePath('/student/journal');
         return { success: 'Journal entry added.' };
     } catch (error) {
+        console.error("Error adding journal entry:", error);
         return { error: 'Failed to add journal entry.' };
     }
 }
