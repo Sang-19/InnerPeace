@@ -16,12 +16,14 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/use-auth';
 import { sendEmergencyAlert } from '@/lib/actions';
 import { Siren } from 'lucide-react';
+import { useState } from 'react';
 
 export function EmergencyAlertButton() {
   const { toast } = useToast();
   const { appUser } = useAuth();
+  const [isSending, setIsSending] = useState(false);
 
-  const handleAlert = async () => {
+  const handleAlert = () => {
     if (!appUser) {
       toast({
         variant: 'destructive',
@@ -30,26 +32,47 @@ export function EmergencyAlertButton() {
       });
       return;
     }
-    
-    const formData = new FormData();
-    formData.append('studentId', appUser.uid);
-    formData.append('studentName', appUser.name);
-    formData.append('studentEmail', appUser.email);
-    
-    const result = await sendEmergencyAlert(formData);
 
-    if (result.success) {
-      toast({
-        title: 'Alert Sent',
-        description: 'Help is on the way. An admin has been notified.',
-      });
-    } else {
-      toast({
-        variant: 'destructive',
-        title: 'Error',
-        description: result.error,
-      });
+    setIsSending(true);
+
+    if (!navigator.geolocation) {
+      toast({ variant: 'destructive', title: 'Location Error', description: 'Geolocation is not supported by your browser.' });
+      setIsSending(false);
+      return;
     }
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+        const locationLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
+
+        const formData = new FormData();
+        formData.append('studentId', appUser.uid);
+        formData.append('studentName', appUser.name);
+        formData.append('studentEmail', appUser.email || 'N/A');
+        formData.append('locationLink', locationLink);
+        
+        const result = await sendEmergencyAlert(formData);
+
+        if (result.success) {
+          toast({
+            title: 'Alert Sent',
+            description: 'Help is on the way. An admin has been notified.',
+          });
+        } else {
+          toast({
+            variant: 'destructive',
+            title: 'Error',
+            description: result.error,
+          });
+        }
+        setIsSending(false);
+      },
+      (error) => {
+        toast({ variant: 'destructive', title: 'Location Error', description: 'Unable to retrieve your location. Please ensure location services are enabled.' });
+        setIsSending(false);
+      }
+    );
   };
 
   return (
@@ -64,14 +87,14 @@ export function EmergencyAlertButton() {
         <AlertDialogHeader>
           <AlertDialogTitle>Are you sure?</AlertDialogTitle>
           <AlertDialogDescription>
-            This will immediately send an emergency alert to the administrators.
+            This will immediately send an emergency alert to the administrators and request your current location.
             Only use this in case of a genuine emergency.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={handleAlert}>
-            Yes, send alert
+          <AlertDialogAction onClick={handleAlert} disabled={isSending}>
+            {isSending ? 'Sending...' : 'Yes, send alert'}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

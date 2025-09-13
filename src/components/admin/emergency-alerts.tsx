@@ -12,14 +12,17 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
 import { db } from '@/lib/firebase/firebase';
-import { Loader2 } from 'lucide-react';
+import { Loader2, MapPin } from 'lucide-react';
 import { AppUser } from '@/lib/types';
+import { Button } from '../ui/button';
+import Link from 'next/link';
 
 interface Alert {
   id: string;
   studentName: string;
   studentEmail: string;
   timestamp: Date;
+  locationLink?: string;
 }
 
 export function EmergencyAlerts() {
@@ -37,6 +40,7 @@ export function EmergencyAlerts() {
           studentName: data.studentName,
           studentEmail: data.studentEmail,
           timestamp: data.timestamp.toDate(),
+          locationLink: data.locationLink,
         } as Alert);
       });
       setAlerts(alertsData);
@@ -61,6 +65,7 @@ export function EmergencyAlerts() {
           <TableHead>Student Name</TableHead>
           <TableHead>Student Email</TableHead>
           <TableHead>Time</TableHead>
+          <TableHead>Location</TableHead>
           <TableHead>Status</TableHead>
         </TableRow>
       </TableHeader>
@@ -70,6 +75,17 @@ export function EmergencyAlerts() {
             <TableCell>{alert.studentName}</TableCell>
             <TableCell>{alert.studentEmail}</TableCell>
             <TableCell>{alert.timestamp.toLocaleString()}</TableCell>
+             <TableCell>
+              {alert.locationLink ? (
+                <Button asChild variant="outline" size="sm">
+                  <Link href={alert.locationLink} target="_blank" rel="noopener noreferrer">
+                    <MapPin className="mr-2 h-4 w-4" /> View Location
+                  </Link>
+                </Button>
+              ) : (
+                'Not provided'
+              )}
+            </TableCell>
             <TableCell>
               <Badge variant="destructive">Needs Action</Badge>
             </TableCell>
