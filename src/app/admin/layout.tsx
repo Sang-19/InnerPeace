@@ -82,9 +82,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     <SidebarProvider>
       <Sidebar>
         <SidebarHeader>
-          <div className="hidden md:block">
-            <Logo />
-          </div>
+          <Logo />
         </SidebarHeader>
         <SidebarContent>
           <SidebarMenu>
@@ -116,6 +114,24 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     </SidebarProvider>
   );
 
+  const MobileNav = () => (
+    <nav className="grid gap-2 text-lg font-medium">
+      <Link href="#" className="flex items-center gap-2 text-lg font-semibold mb-4">
+        <Logo />
+        <span className="sr-only">EduCare</span>
+      </Link>
+      {adminNavItems.map((item) => (
+        <Link
+          key={item.href}
+          href={item.href}
+          className={`mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 ${pathname.startsWith(item.href) ? 'bg-muted text-foreground' : 'text-muted-foreground hover:text-foreground'}`}>
+          <item.icon className="h-5 w-5" />
+          {item.label}
+        </Link>
+      ))}
+    </nav>
+  );
+
   return (
       <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
         <div className="hidden border-r bg-card md:block">
@@ -132,8 +148,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   <span className="sr-only">Toggle navigation menu</span>
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left" className="flex flex-col p-0 bg-card">
-                <NavContent />
+              <SheetContent side="left" className="flex flex-col p-6 bg-card">
+                <MobileNav />
               </SheetContent>
             </Sheet>
             <div className="w-full flex-1">
