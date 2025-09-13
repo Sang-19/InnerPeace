@@ -61,8 +61,10 @@ export default function JournalPage() {
   const handleExternalSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (externalSearchQuery.trim() === '') return;
-    const url = `https://www.google.com/search?q=${encodeURIComponent(externalSearchQuery + ' books or journals')}`;
-    window.open(url, '_blank');
+    // Replace spaces with hyphens or encode as needed
+    const bookSlug = encodeURIComponent(externalSearchQuery.trim().replace(/\s+/g, '-'));
+    const url = `https://libtoon.com/p/${bookSlug}`;
+    window.open(url, '_blank'); // or use window.location.href = url; opens the link in a new browser tab 
   };
 
   const filteredEntries = entries.filter((entry) =>
