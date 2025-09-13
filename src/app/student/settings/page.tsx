@@ -4,6 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
+import { ThemeToggle } from "@/components/shared/theme-toggle";
 
 export default function SettingsPage() {
   return (
@@ -56,6 +57,16 @@ export default function SettingsPage() {
             </div>
             <Switch id="community-notifs" />
           </div>
+        </CardContent>
+      </Card>
+      
+      <Card>
+        <CardHeader>
+            <CardTitle>Appearance</CardTitle>
+            <CardDescription>Customize the look and feel of the app.</CardDescription>
+        </CardHeader>
+        <CardContent>
+            <ThemeToggle />
         </CardContent>
       </Card>
     </div>
