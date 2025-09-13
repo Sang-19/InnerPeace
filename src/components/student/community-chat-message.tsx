@@ -6,7 +6,7 @@ import { useToast } from '@/hooks/use-toast';
 import { CommunityMessage } from '@/lib/types';
 import { formatDistanceToNow } from 'date-fns';
 import { Button } from '@/components/ui/button';
-import { Flag, Loader2, ShieldAlert } from 'lucide-react';
+import { Flag, Loader2, ShieldAlert, Eye, EyeOff } from 'lucide-react';
 import { reportCommunityMessage } from '@/lib/actions';
 import {
   AlertDialog,
@@ -28,6 +28,7 @@ export function CommunityChatMessage({ message }: CommunityChatMessageProps) {
   const { appUser } = useAuth();
   const { toast } = useToast();
   const [isReporting, setIsReporting] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(!message.isHarmful);
   const isMyMessage = message.senderId === appUser?.uid;
 
   const handleReport = async () => {
@@ -59,15 +60,20 @@ export function CommunityChatMessage({ message }: CommunityChatMessageProps) {
       <div
         className={`max-w-[75%] rounded-lg px-3 py-2 text-sm ${
           isMyMessage ? 'bg-primary text-primary-foreground' : 'bg-muted'
-        }`}
+        } ${message.isHarmful && 'border-destructive/50 border'}`}
       >
         {message.isHarmful && (
-            <div className="flex items-center gap-2 text-destructive-foreground/80 border-b border-destructive-foreground/20 pb-2 mb-2">
-                <ShieldAlert className="h-4 w-4" />
-                <p className="text-xs font-semibold">This message was flagged as potentially harmful.</p>
+            <div className="flex items-center justify-between gap-2 text-destructive-foreground/80 border-b border-destructive-foreground/20 pb-2 mb-2">
+                <div className="flex items-center gap-2">
+                    <ShieldAlert className="h-4 w-4" />
+                    <p className="text-xs font-semibold">Potentially harmful content</p>
+                </div>
+                <Button variant="ghost" size="sm" className="h-auto p-0 hover:bg-transparent hover:text-inherit" onClick={() => setIsExpanded(!isExpanded)}>
+                    {isExpanded ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </Button>
             </div>
         )}
-        <p className="whitespace-pre-wrap">{message.message}</p>
+        {isExpanded && <p className="whitespace-pre-wrap">{message.message}</p>}
         <div className={`text-xs mt-2 flex items-center justify-between gap-4 ${isMyMessage ? 'text-primary-foreground/70' : 'text-muted-foreground/70'}`}>
             <span>{formattedTimestamp}</span>
             {!isMyMessage && (
