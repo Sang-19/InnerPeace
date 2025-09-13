@@ -38,6 +38,7 @@ export default function StudentDashboard() {
           <p className="text-muted-foreground">Welcome back! Here's your daily overview.</p>
         </div>
         <div className="flex gap-2">
+          {/* 
           <Button 
             variant="outline" 
             size="sm" 
@@ -47,6 +48,7 @@ export default function StudentDashboard() {
             <Database className="h-4 w-4 mr-2" />
             {testingConnection ? 'Testing...' : 'Test Firebase'}
           </Button>
+          */}
           <EmergencyAlertButton />
         </div>
       </div>
