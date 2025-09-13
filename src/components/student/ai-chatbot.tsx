@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Bot, Send, X, Loader2 } from 'lucide-react';
+import { Sparkles, Send, X, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -68,7 +68,7 @@ export function AI_Chatbot() {
             <Card className="w-[350px] h-[500px] flex flex-col shadow-2xl">
               <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className="flex items-center gap-2">
-                  <Bot /> Support Chat
+                  <Sparkles /> Peace Pal
                 </CardTitle>
                 <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)}>
                   <X className="h-4 w-4" />
@@ -128,7 +128,7 @@ export function AI_Chatbot() {
         onClick={() => setIsOpen(!isOpen)}
         aria-label="Toggle chatbot"
       >
-        {isOpen ? <X className="h-6 w-6" /> : <Bot className="h-6 w-6" />}
+        {isOpen ? <X className="h-6 w-6" /> : <Sparkles className="h-6 w-6" />}
       </Button>
     </>
   );
