@@ -49,8 +49,8 @@ const CustomYAxisTick = (props: any) => {
   
     return (
       <g transform={`translate(${x},${y})`}>
-        <text x={0} y={0} dy={4} textAnchor="end" fill="#666">
-          {`${moodInfo.emoji} ${moodInfo.mood}`}
+        <text x={0} y={0} dy={4} textAnchor="end" fill="hsl(var(--muted-foreground))" fontSize={12}>
+          {`${moodInfo.emoji}`}
         </text>
       </g>
     );
@@ -80,7 +80,6 @@ export function WeeklyMoodGraph() {
             };
         });
 
-        // Create a map of the last 7 days
         const last7Days = Array.from({ length: 7 }).map((_, i) => {
             const day = subDays(new Date(), 6-i);
             return format(day, 'MMM d');
@@ -91,7 +90,6 @@ export function WeeklyMoodGraph() {
             const logsForDay = moodLogs.filter(log => format(log.date, 'MMM d') === dayStr);
             if(logsForDay.length > 0) {
                 dataFound = true;
-                // Average mood for the day if multiple entries exist
                 const avgMood = logsForDay.reduce((acc, log) => acc + log.mood, 0) / logsForDay.length;
                  return { date: dayStr, mood: Math.round(avgMood) };
             }
@@ -127,54 +125,44 @@ export function WeeklyMoodGraph() {
           data={data}
           margin={{
             top: 5,
-            right: 20,
-            left: 20,
+            right: 10,
+            left: 10,
             bottom: 5,
           }}
         >
-          <CartesianGrid strokeDasharray="3 3" vertical={false} />
+          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
           <XAxis
             dataKey="date"
-            stroke="#888888"
+            stroke="hsl(var(--muted-foreground))"
             fontSize={12}
             tickLine={false}
             axisLine={false}
           />
           <YAxis
-            stroke="#888888"
+            stroke="hsl(var(--muted-foreground))"
             fontSize={12}
             tickLine={false}
             axisLine={false}
             domain={[1, 5]}
             tickCount={5}
             tick={<CustomYAxisTick />}
-            width={80}
+            width={40}
           />
           <Tooltip
-            cursor={{ stroke: 'hsl(var(--primary))', strokeWidth: 2, strokeDasharray: '3 3' }}
+            cursor={{ stroke: 'hsl(var(--primary))', strokeWidth: 1, strokeDasharray: '3 3' }}
             content={({ active, payload, label }) => {
               if (active && payload && payload.length && payload[0].value !== null) {
                 const moodValue = payload[0].value as number;
                 const moodInfo = moodDisplay[moodValue - 1];
                 return (
-                  <div className="rounded-lg border bg-background p-2 shadow-sm">
-                    <div className="grid grid-cols-2 gap-2">
-                      <div className="flex flex-col">
-                        <span className="text-[0.70rem] uppercase text-muted-foreground">
-                          Date
-                        </span>
-                        <span className="font-bold text-muted-foreground">
-                          {label}
-                        </span>
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="text-[0.70rem] uppercase text-muted-foreground">
-                          Mood
-                        </span>
-                        <span className="font-bold">
-                           {moodInfo ? `${moodInfo.emoji} ${moodInfo.mood}` : 'N/A'}
-                        </span>
-                      </div>
+                  <div className="rounded-lg border bg-background/80 backdrop-blur-sm p-2 shadow-sm">
+                    <div className="flex flex-col items-center">
+                      <span className="font-bold text-foreground">
+                         {moodInfo ? `${moodInfo.emoji} ${moodInfo.mood}` : 'N/A'}
+                      </span>
+                      <span className="text-xs text-muted-foreground">
+                        {label}
+                      </span>
                     </div>
                   </div>
                 );
@@ -190,8 +178,13 @@ export function WeeklyMoodGraph() {
             dot={{
               r: 4,
               fill: 'hsl(var(--primary))',
-              stroke: 'hsl(var(--background))',
-              strokeWidth: 2,
+              strokeWidth: 0,
+            }}
+             activeDot={{
+                r: 6,
+                fill: 'hsl(var(--primary))',
+                stroke: 'hsl(var(--background))',
+                strokeWidth: 2,
             }}
             connectNulls
           />
