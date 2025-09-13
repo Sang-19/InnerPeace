@@ -22,6 +22,7 @@ import { signOut } from 'firebase/auth';
 import { auth } from '@/lib/firebase/firebase';
 import { AI_Chatbot } from '@/components/student/ai-chatbot';
 import { DailySupportQuestion } from '@/components/student/daily-support-question';
+import { useEffect } from 'react';
 
 const studentNavItems = [
   { href: '/student/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
@@ -36,18 +37,20 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
   const { appUser, loading } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
+  
+  useEffect(() => {
+    if (!loading && (!appUser || appUser.role !== 'student')) {
+      router.push('/');
+    }
+  }, [appUser, loading, router]);
 
-  if (loading) {
+
+  if (loading || !appUser || appUser.role !== 'student') {
     return (
       <div className="flex h-screen items-center justify-center">
         <p>Loading...</p>
       </div>
     );
-  }
-
-  if (!appUser || appUser.role !== 'student') {
-    router.push('/');
-    return null;
   }
   
   const handleLogout = async () => {
