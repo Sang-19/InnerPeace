@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Book, HeartPulse, MessageSquare } from "lucide-react";
 import Link from "next/link";
+import { MindfulBreathing } from "@/components/student/mindful-breathing";
 
 export default function StudentDashboard() {
   return (
@@ -26,6 +27,15 @@ export default function StudentDashboard() {
             </CardHeader>
             <CardContent>
               <WeeklyMoodGraph />
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Mindful Peace Game</CardTitle>
+              <CardDescription>A simple exercise to calm your mind.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <MindfulBreathing />
             </CardContent>
           </Card>
         </div>
