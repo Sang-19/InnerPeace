@@ -24,6 +24,7 @@ export default function JournalPage() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [externalSearchQuery, setExternalSearchQuery] = useState('');
 
   useEffect(() => {
     if (appUser) {
@@ -57,6 +58,13 @@ export default function JournalPage() {
     setSubmitting(false);
   };
   
+  const handleExternalSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (externalSearchQuery.trim() === '') return;
+    const url = `https://www.google.com/search?q=${encodeURIComponent(externalSearchQuery + ' books or journals')}`;
+    window.open(url, '_blank');
+  };
+
   const filteredEntries = entries.filter((entry) =>
     entry.content.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -82,7 +90,28 @@ export default function JournalPage() {
             </Button>
           </CardContent>
         </Card>
-        <InspirationalStories />
+        
+        <Card>
+          <CardHeader>
+            <CardTitle>Find Books & Journals Online</CardTitle>
+            <CardDescription>Search the internet for books and journals to read.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleExternalSearch} className="flex items-center gap-2">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="e.g., 'mindfulness books'"
+                  value={externalSearchQuery}
+                  onChange={(e) => setExternalSearchQuery(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+              <Button type="submit">Search</Button>
+            </form>
+          </CardContent>
+        </Card>
+
       </div>
 
       <Card>
@@ -127,6 +156,9 @@ export default function JournalPage() {
           )}
         </CardContent>
       </Card>
+
+       <InspirationalStories />
+
     </div>
   );
 }
