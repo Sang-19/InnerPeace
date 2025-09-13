@@ -31,9 +31,10 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { signOut } from 'firebase/auth';
 import { auth, db } from '@/lib/firebase/firebase';
-import { useEffect, useState } from 'react';
-import { collection, onSnapshot } from 'firebase/firestore';
+import { useEffect, useState, useRef } from 'react';
+import { collection, onSnapshot, query, orderBy, limit, where } from 'firebase/firestore';
 import { Badge } from '@/components/ui/badge';
+import { useToast } from '@/hooks/use-toast';
 
 const adminNavItems = [
   { href: '/admin/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
@@ -49,6 +50,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const router = useRouter();
   const pathname = usePathname();
   const [alertCount, setAlertCount] = useState(0);
+  const { toast } = useToast();
+  const prevAlertCountRef = useRef(0);
+  const isInitialLoadRef = useRef(true);
 
   useEffect(() => {
     if (!loading && (!appUser || appUser.role !== 'admin')) {
@@ -57,13 +61,51 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }, [appUser, loading, router]);
 
   useEffect(() => {
-    const q = collection(db, 'alerts');
+    // Query for pending alerts only to get accurate count
+    const q = query(
+      collection(db, 'alerts'),
+      orderBy('timestamp', 'desc')
+    );
+    
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      setAlertCount(querySnapshot.size);
+      const currentAlertCount = querySnapshot.size;
+      const pendingAlerts = querySnapshot.docs.filter(doc => 
+        doc.data().status !== 'resolved'
+      );
+      
+      setAlertCount(pendingAlerts.length);
+      
+      // Show toast notification for new alerts (but not on initial load)
+      if (!isInitialLoadRef.current && currentAlertCount > prevAlertCountRef.current) {
+        const newAlerts = querySnapshot.docs.slice(0, currentAlertCount - prevAlertCountRef.current);
+        
+        newAlerts.forEach(doc => {
+          const data = doc.data();
+          if (data.status !== 'resolved') {
+            toast({
+              title: '🚨 Emergency Alert!',
+              description: `${data.studentName} has triggered an emergency alert. Click to view details.`,
+              variant: 'destructive',
+              action: (
+                <Button asChild variant="outline" size="sm">
+                  <Link href="/admin/emergency">View Alert</Link>
+                </Button>
+              ),
+            });
+          }
+        });
+      }
+      
+      prevAlertCountRef.current = currentAlertCount;
+      
+      // After first load, enable notifications
+      if (isInitialLoadRef.current) {
+        isInitialLoadRef.current = false;
+      }
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [toast]);
 
   if (loading || !appUser || appUser.role !== 'admin') {
     return (
@@ -88,12 +130,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <SidebarMenu>
             {adminNavItems.map((item) => (
               <SidebarMenuItem key={item.href}>
-                <Link href={item.href} legacyBehavior passHref>
+                <Link href={item.href} passHref>
                   <SidebarMenuButton asChild isActive={pathname.startsWith(item.href)}>
-                    <a>
-                      <item.icon />
+                    <div className="flex items-center gap-2">
+                      <item.icon className="h-5 w-5" />
                       <span>{item.label}</span>
-                    </a>
+                    </div>
                   </SidebarMenuButton>
                 </Link>
               </SidebarMenuItem>
@@ -116,15 +158,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   const MobileNav = () => (
     <nav className="grid gap-2 text-lg font-medium">
-      <Link href="#" className="flex items-center gap-2 text-lg font-semibold mb-4">
+      <div className="flex items-center gap-2 text-lg font-semibold mb-4">
         <Logo />
         <span className="sr-only">Inner Peace</span>
-      </Link>
+      </div>
       {adminNavItems.map((item) => (
         <Link
           key={item.href}
           href={item.href}
-          className={`mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 ${pathname.startsWith(item.href) ? 'bg-muted text-foreground' : 'text-muted-foreground hover:text-foreground'}`}>
+          className={`mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 ${pathname.startsWith(item.href) ? 'bg-muted text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+        >
           <item.icon className="h-5 w-5" />
           {item.label}
         </Link>

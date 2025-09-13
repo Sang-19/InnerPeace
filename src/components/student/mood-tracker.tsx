@@ -23,20 +23,43 @@ export function MoodTracker() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmitMood = async () => {
-    if (!selectedMood || !appUser) return;
+    if (!selectedMood || !appUser) {
+      console.error('MoodTracker: Cannot submit - missing data:', {
+        selectedMood,
+        appUser: !!appUser
+      });
+      return;
+    }
 
+    console.log('MoodTracker: Submitting mood:', selectedMood, 'for user:', appUser.uid);
     setIsSubmitting(true);
+    
     const formData = new FormData();
     formData.append('userId', appUser.uid);
     formData.append('mood', selectedMood);
     
-    const result = await submitMood(formData);
-    
-    if (result.success) {
-      toast({ title: 'Mood Submitted', description: `You've selected ${selectedMood}.` });
-      setSelectedMood(null);
-    } else {
-      toast({ variant: 'destructive', title: 'Error', description: 'Failed to submit mood.' });
+    try {
+      const result = await submitMood(formData);
+      
+      if (result.success) {
+        console.log('MoodTracker: Mood submitted successfully');
+        toast({ title: 'Mood Submitted', description: `You've selected ${selectedMood}.` });
+        setSelectedMood(null);
+      } else {
+        console.error('MoodTracker: Mood submission failed:', result.error);
+        toast({ 
+          variant: 'destructive', 
+          title: 'Error', 
+          description: result.error || 'Failed to submit mood.' 
+        });
+      }
+    } catch (error) {
+      console.error('MoodTracker: Unexpected error during mood submission:', error);
+      toast({ 
+        variant: 'destructive', 
+        title: 'Error', 
+        description: 'An unexpected error occurred. Please try again.' 
+      });
     }
     
     setIsSubmitting(false);

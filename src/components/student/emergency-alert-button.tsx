@@ -25,6 +25,7 @@ export function EmergencyAlertButton() {
 
   const handleAlert = () => {
     if (!appUser) {
+      console.error('EmergencyAlert: User not logged in');
       toast({
         variant: 'destructive',
         title: 'Not logged in',
@@ -33,43 +34,63 @@ export function EmergencyAlertButton() {
       return;
     }
 
+    console.log('EmergencyAlert: Starting alert process for user:', appUser.uid);
     setIsSending(true);
 
     if (!navigator.geolocation) {
+      console.error('EmergencyAlert: Geolocation not supported');
       toast({ variant: 'destructive', title: 'Location Error', description: 'Geolocation is not supported by your browser.' });
       setIsSending(false);
       return;
     }
 
+    console.log('EmergencyAlert: Getting user location...');
     navigator.geolocation.getCurrentPosition(
       async (position) => {
-        const { latitude, longitude } = position.coords;
-        const locationLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
-
-        const formData = new FormData();
-        formData.append('studentId', appUser.uid);
-        formData.append('studentName', appUser.name);
-        formData.append('studentEmail', appUser.email || 'N/A');
-        formData.append('locationLink', locationLink);
-        
-        const result = await sendEmergencyAlert(formData);
-
-        if (result.success) {
-          toast({
-            title: 'Alert Sent',
-            description: 'Help is on the way. An admin has been notified.',
-          });
-        } else {
-          toast({
-            variant: 'destructive',
-            title: 'Error',
-            description: result.error,
-          });
+        try {
+            const { latitude, longitude } = position.coords;
+            const locationLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
+            
+            console.log('EmergencyAlert: Location obtained, sending alert...');
+    
+            const formData = new FormData();
+            formData.append('studentId', appUser.uid);
+            formData.append('studentName', appUser.name);
+            formData.append('studentEmail', appUser.email || 'N/A');
+            formData.append('locationLink', locationLink);
+            
+            const result = await sendEmergencyAlert(formData);
+            
+            console.log('EmergencyAlert: Server response:', result);
+    
+            if (result.success) {
+              console.log('EmergencyAlert: Alert sent successfully');
+              toast({
+                title: 'Emergency Alert Sent',
+                description: 'Help is on the way. Campus security and administrators have been notified.',
+                variant: 'default',
+              });
+            } else {
+              throw new Error(result.error || 'Failed to send alert');
+            }
+        } catch (error) {
+            console.error('EmergencyAlert: Error sending emergency alert:', error);
+            toast({
+              variant: 'destructive',
+              title: 'Error',
+              description: error instanceof Error ? error.message : 'Failed to send emergency alert. Please try again or contact support immediately.',
+            });
+        } finally {
+            setIsSending(false);
         }
-        setIsSending(false);
       },
       (error) => {
-        toast({ variant: 'destructive', title: 'Location Error', description: 'Unable to retrieve your location. Please ensure location services are enabled.' });
+        console.error('EmergencyAlert: Location error:', error);
+        toast({ 
+          variant: 'destructive', 
+          title: 'Location Error', 
+          description: `Unable to retrieve your location: ${error.message}. Please ensure location services are enabled.` 
+        });
         setIsSending(false);
       }
     );

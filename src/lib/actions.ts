@@ -1,7 +1,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { addDoc, collection, serverTimestamp, doc, updateDoc } from 'firebase/firestore';
+import { addDoc, collection, serverTimestamp, doc, updateDoc, getDocs, query, where } from 'firebase/firestore';
 import { db } from '@/lib/firebase/firebase';
 import { Mood } from './types';
 import { analyzeCommunityReport } from '@/ai/flows/community-report-analysis';
@@ -12,22 +12,71 @@ export async function sendEmergencyAlert(formData: FormData) {
   const studentEmail = formData.get('studentEmail') as string;
   const locationLink = formData.get('locationLink') as string;
 
+  console.log('sendEmergencyAlert called with:', {
+    studentId: studentId ? '[REDACTED]' : 'MISSING',
+    studentName: studentName || 'MISSING',
+    studentEmail: studentEmail ? '[REDACTED]' : 'MISSING',
+    locationLink: locationLink ? '[REDACTED]' : 'MISSING'
+  });
+
   if (!studentId || !studentName || !studentEmail) {
-    return { error: 'User information is missing.' };
+    console.error('Missing required user information:', { studentId: !!studentId, studentName: !!studentName, studentEmail: !!studentEmail });
+    return { success: false, error: 'User information is missing.' };
   }
 
   try {
-    await addDoc(collection(db, 'alerts'), {
+    console.log('Creating alert document...');
+    // Create the alert document
+    const alertRef = await addDoc(collection(db, 'alerts'), {
       studentId,
       studentName,
       studentEmail,
       locationLink: locationLink || null,
       timestamp: serverTimestamp(),
       status: 'pending',
+      resolvedAt: null,
+      resolvedBy: null,
     });
-    return { success: 'Alert sent successfully.' };
+    console.log('Alert document created:', alertRef.id);
+
+    console.log('Fetching admin users...');
+    // Get the admin users to notify
+    const adminUsers = await getDocs(
+      query(collection(db, 'users'), where('role', '==', 'admin'))
+    );
+    console.log('Found admin users:', adminUsers.docs.length);
+
+    if (adminUsers.docs.length > 0) {
+      console.log('Creating notifications for admins...');
+      // Create notifications for each admin
+      const notifications = adminUsers.docs.map((adminDoc) => {
+        return addDoc(collection(db, 'notifications'), {
+          userId: adminDoc.id,
+          type: 'emergency_alert',
+          title: 'New Emergency Alert',
+          message: `${studentName} (${studentEmail}) has triggered an emergency alert.`,
+          read: false,
+          relatedId: alertRef.id,
+          timestamp: serverTimestamp(),
+        });
+      });
+
+      await Promise.all(notifications);
+      console.log('Notifications created successfully');
+    } else {
+      console.warn('No admin users found to notify');
+    }
+    
+    return { success: true, message: 'Alert sent successfully.' };
   } catch (error) {
-    return { error: 'Failed to send alert. Please try again.' };
+    console.error('Error sending emergency alert:', error);
+    console.error('Error details:', {
+      name: error instanceof Error ? error.name : 'Unknown',
+      message: error instanceof Error ? error.message : String(error),
+      code: (error as any)?.code,
+      stack: error instanceof Error ? error.stack : 'No stack trace'
+    });
+    return { success: false, error: `Failed to send alert: ${error instanceof Error ? error.message : 'Unknown error'}` };
   }
 }
 
@@ -127,21 +176,57 @@ export async function reportCommunityMessage(formData: FormData) {
     }
 }
 
+export async function resolveEmergencyAlert(formData: FormData) {
+  const alertId = formData.get('alertId') as string;
+  const adminId = formData.get('adminId') as string;
+  const adminName = formData.get('adminName') as string;
+
+  if (!alertId || !adminId || !adminName) {
+    return { success: false, error: 'Missing required information.' };
+  }
+
+  try {
+    const alertRef = doc(db, 'alerts', alertId);
+    await updateDoc(alertRef, {
+      status: 'resolved',
+      resolvedAt: serverTimestamp(),
+      resolvedBy: adminName,
+      resolvedByUserId: adminId,
+    });
+
+    revalidatePath('/admin/emergency');
+    revalidatePath('/admin/dashboard');
+    return { success: true, message: 'Alert resolved successfully.' };
+  } catch (error) {
+    console.error('Error resolving alert:', error);
+    return { success: false, error: 'Failed to resolve alert.' };
+  }
+}
+
 export async function submitMood(formData: FormData) {
   const userId = formData.get('userId') as string;
   const mood = formData.get('mood') as Mood;
 
+  console.log('submitMood called with:', {
+    userId: userId ? '[REDACTED]' : 'MISSING',
+    mood: mood || 'MISSING'
+  });
+
   if (!userId || !mood) {
+    console.error('Missing required parameters:', { userId: !!userId, mood: !!mood });
     return { error: 'User ID and mood are required.' };
   }
 
   try {
+    console.log('Adding mood to mood-logs collection...');
     // Add to mood-logs collection for historical tracking
-    await addDoc(collection(db, `users/${userId}/mood-logs`), {
+    const moodLogRef = await addDoc(collection(db, `users/${userId}/mood-logs`), {
       mood,
       date: serverTimestamp(),
     });
+    console.log('Mood log created:', moodLogRef.id);
 
+    console.log('Updating user document with latest mood...');
     // Update the latest mood on the user's document for quick access
     const userRef = doc(db, 'users', userId);
     await updateDoc(userRef, {
@@ -150,11 +235,18 @@ export async function submitMood(formData: FormData) {
         date: serverTimestamp(),
       },
     });
+    console.log('User document updated successfully');
 
     revalidatePath('/student/dashboard');
     return { success: 'Mood submitted successfully.' };
   } catch (error) {
     console.error('Error submitting mood:', error);
-    return { error: 'Failed to submit mood.' };
+    console.error('Error details:', {
+      name: error instanceof Error ? error.name : 'Unknown',
+      message: error instanceof Error ? error.message : String(error),
+      code: (error as any)?.code,
+      stack: error instanceof Error ? error.stack : 'No stack trace'
+    });
+    return { error: `Failed to submit mood: ${error instanceof Error ? error.message : 'Unknown error'}` };
   }
 }

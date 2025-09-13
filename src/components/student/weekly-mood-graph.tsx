@@ -64,7 +64,10 @@ export function WeeklyMoodGraph() {
 
   useEffect(() => {
     if (appUser) {
+      console.log('WeeklyMoodGraph: Setting up mood data listener for user:', appUser.uid);
       const sevenDaysAgo = subDays(new Date(), 7);
+      console.log('WeeklyMoodGraph: Querying mood logs from:', sevenDaysAgo);
+      
       const q = query(
         collection(db, `users/${appUser.uid}/mood-logs`),
         where('date', '>=', sevenDaysAgo),
@@ -72,8 +75,15 @@ export function WeeklyMoodGraph() {
       );
 
       const unsubscribe = onSnapshot(q, (snapshot) => {
+        console.log('WeeklyMoodGraph: Received snapshot with', snapshot.docs.length, 'mood logs');
+        
         const moodLogs = snapshot.docs.map(doc => {
             const data = doc.data() as { mood: Mood, date: Timestamp };
+            console.log('WeeklyMoodGraph: Processing mood log:', {
+              id: doc.id,
+              mood: data.mood,
+              date: data.date.toDate().toISOString()
+            });
             return {
                 mood: moodMapping[data.mood],
                 date: data.date.toDate(),
@@ -85,23 +95,35 @@ export function WeeklyMoodGraph() {
             return format(day, 'MMM d');
         });
         
+        console.log('WeeklyMoodGraph: Processing data for last 7 days:', last7Days);
+        
         let dataFound = false;
         const processedData = last7Days.map(dayStr => {
             const logsForDay = moodLogs.filter(log => format(log.date, 'MMM d') === dayStr);
             if(logsForDay.length > 0) {
                 dataFound = true;
                 const avgMood = logsForDay.reduce((acc, log) => acc + log.mood, 0) / logsForDay.length;
+                console.log('WeeklyMoodGraph: Found mood data for', dayStr, '- average:', avgMood);
                  return { date: dayStr, mood: Math.round(avgMood) };
             }
             return { date: dayStr, mood: null };
         });
 
+        console.log('WeeklyMoodGraph: Final processed data:', processedData);
+        console.log('WeeklyMoodGraph: Has data:', dataFound);
+        
         setHasData(dataFound);
         setData(processedData);
+        setLoading(false);
+      }, (error) => {
+        console.error('WeeklyMoodGraph: Error fetching mood data:', error);
         setLoading(false);
       });
 
       return () => unsubscribe();
+    } else {
+      console.log('WeeklyMoodGraph: No user available');
+      setLoading(false);
     }
   }, [appUser]);
 
