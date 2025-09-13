@@ -8,7 +8,7 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Clock, Leaf, Wind, Walk, Eye } from 'lucide-react';
+import { Clock, Leaf, Wind, Eye, Footprints } from 'lucide-react';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import relaxationData from '@/lib/relaxation-guides.json';
 import type { RelaxationGuide } from '@/lib/types';
@@ -30,7 +30,7 @@ export default function RelaxationPage() {
       case 'grounding':
         return <Eye className="h-5 w-5 text-primary" />;
       case 'walking':
-        return <Walk className="h-5 w-5 text-primary" />;
+        return <Footprints className="h-5 w-5 text-primary" />;
       default:
         return null;
     }
