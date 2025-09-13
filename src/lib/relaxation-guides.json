@@ -48,6 +48,53 @@
                 "Come to a seated position and do a gentle spinal twist.",
                 "Finish with a few moments in Child's Pose."
             ]
+        },
+        {
+            "id": "grounding-1",
+            "title": "5-4-3-2-1 Grounding",
+            "description": "Engage your senses to anchor yourself in the present.",
+            "type": "grounding",
+            "duration": 5,
+            "imageId": "grounding-exercise",
+            "steps": [
+                "Take a deep breath. Look around you and name 5 things you can see.",
+                "Name 4 things you can feel. (e.g., the texture of your clothes, the surface you're sitting on).",
+                "Name 3 things you can hear. Listen for sounds both near and far.",
+                "Name 2 things you can smell. If you can't smell anything, name your 2 favorite smells.",
+                "Name 1 thing you can taste. You can take a sip of water or just notice the taste in your mouth."
+            ]
+        },
+        {
+            "id": "breathing-2",
+            "title": "Progressive Muscle Relaxation",
+            "description": "Release physical tension by tensing and relaxing muscle groups.",
+            "type": "breathing",
+            "duration": 15,
+            "imageId": "breathing-exercise-2",
+            "steps": [
+                "Sit or lie down comfortably.",
+                "Tense the muscles in your toes for 5 seconds, then relax completely.",
+                "Move up to your calves, tensing and relaxing.",
+                "Continue this process up through your body: thighs, abdomen, chest, arms, hands, neck, and face.",
+                "Breathe deeply and notice the feeling of relaxation throughout your body.",
+                "End by shaking out your limbs gently."
+            ]
+        },
+        {
+            "id": "walking-1",
+            "title": "Mindful Walking",
+            "description": "Connect with your body and surroundings with a short, mindful walk.",
+            "type": "walking",
+            "duration": 10,
+            "imageId": "mindful-walk",
+            "steps": [
+                "Find a space where you can walk back and forth for 10-15 paces.",
+                "Walk at a natural, comfortable pace.",
+                "Pay attention to the sensation of your feet on the ground.",
+                "Notice the subtle movements in your ankles, knees, and hips.",
+                "When your mind wanders, gently bring your focus back to the sensation of walking.",
+                "There's no goal or destination; simply be present with each step."
+            ]
         }
     ]
 }

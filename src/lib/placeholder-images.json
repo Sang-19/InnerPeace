@@ -25,6 +25,24 @@
       "imageHint": "yoga pose"
     },
     {
+      "id": "grounding-exercise",
+      "description": "Image for a grounding exercise.",
+      "imageUrl": "https://picsum.photos/seed/5/800/600",
+      "imageHint": "forest floor"
+    },
+    {
+      "id": "breathing-exercise-2",
+      "description": "Image for progressive muscle relaxation.",
+      "imageUrl": "https://picsum.photos/seed/6/800/600",
+      "imageHint": "calm water"
+    },
+    {
+      "id": "mindful-walk",
+      "description": "Image for a mindful walking exercise.",
+      "imageUrl": "https://picsum.photos/seed/7/800/600",
+      "imageHint": "path forest"
+    },
+    {
       "id": "user-avatar-1",
       "description": "Avatar for user 1.",
       "imageUrl": "https://picsum.photos/seed/101/40/40",

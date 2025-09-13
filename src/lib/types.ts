@@ -69,7 +69,7 @@ export type Feedback = {
 };
 
 export type AdminTask = {
-  id: string;
+  id:string;
   task: string;
   status: 'pending' | 'completed';
 };
@@ -87,7 +87,7 @@ export type RelaxationGuide = {
   id: string;
   title: string;
   description: string;
-  type: 'breathing' | 'meditation' | 'yoga';
+  type: 'breathing' | 'meditation' | 'yoga' | 'grounding' | 'walking';
   steps: string[];
   duration?: number; // in minutes
   imageId?: string;
