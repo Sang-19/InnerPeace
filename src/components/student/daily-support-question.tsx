@@ -21,39 +21,39 @@ export function DailySupportQuestion() {
   const [answers, setAnswers] = useState<Mood[]>([]);
   const { appUser } = useAuth();
   const { toast } = useToast();
-  const [quizCompleted, setQuizCompleted] = useState(false);
 
   useEffect(() => {
+    // A simple way to check if the quiz has been taken in the current session.
+    // For persistence across sessions, localStorage or Firestore would be better.
+    const hasTakenQuiz = sessionStorage.getItem('dailyQuizCompleted');
+
     async function fetchQuiz() {
-      if (appUser) {
+      if (appUser && !hasTakenQuiz) {
         setLoading(true);
         try {
           const result = await generatePersonalizedQuestion({ studentName: appUser.name });
-          setQuizData(result);
-          setIsOpen(true); 
-          setQuizCompleted(false);
-          setCurrentQuestionIndex(0);
-          setAnswers([]);
+          if (result && result.questions && result.questions.length > 0) {
+            setQuizData(result);
+            setIsOpen(true);
+            setCurrentQuestionIndex(0);
+            setAnswers([]);
+          } else {
+            // Handle cases where the AI might return no questions
+            setIsOpen(false);
+          }
         } catch (error) {
           console.error("Failed to generate quiz:", error);
-          toast({ variant: 'destructive', title: "Couldn't load check-in", description: "There was an error generating your daily questions."});
+          // Don't show a toast, fail silently to not interrupt user.
         } finally {
           setLoading(false);
         }
+      } else {
+        setLoading(false);
       }
     }
 
-    // This is a placeholder for checking if the quiz has been taken today.
-    // In a real app, you would store this in Firestore or local storage.
-    const hasTakenQuizToday = false; 
-
-    if (!hasTakenQuizToday) {
-        fetchQuiz();
-    } else {
-        setLoading(false);
-        setQuizCompleted(true);
-    }
-  }, [appUser, toast]);
+    fetchQuiz();
+  }, [appUser]);
 
   const handleAnswer = (mood: Mood) => {
     const newAnswers = [...answers, mood];
@@ -80,7 +80,7 @@ export function DailySupportQuestion() {
   const finishQuiz = async (finalAnswers: Mood[]) => {
     const finalMood = calculateFinalMood(finalAnswers);
     setIsOpen(false);
-    setQuizCompleted(true);
+    sessionStorage.setItem('dailyQuizCompleted', 'true');
     
     if (appUser) {
         const formData = new FormData();
@@ -102,25 +102,22 @@ export function DailySupportQuestion() {
         }
     }
   };
+  
+  const handleClose = () => {
+    setIsOpen(false);
+    // Allow the user to skip and not be shown the quiz again this session.
+    sessionStorage.setItem('dailyQuizCompleted', 'true');
+  }
 
   const currentQuestion = quizData?.questions[currentQuestionIndex];
+  
+  // Don't render anything if loading, completed, or no quiz data
+  if (!isOpen || loading || !quizData) {
+    return null;
+  }
 
   return (
-    <>
-      {loading ? (
-        <div className="flex items-center gap-2 text-muted-foreground">
-          <Loader2 className="h-4 w-4 animate-spin" />
-          <p>Loading check-in...</p>
-        </div>
-      ) : quizCompleted ? (
-        <div>
-            <p>You have completed today's check-in. Great job!</p>
-        </div>
-      ) : (
-        <Button onClick={() => setIsOpen(true)}>Start Daily Check-in</Button>
-      )}
-    
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <Dialog open={isOpen} onOpenChange={handleClose}>
         <DialogContent className="sm:max-w-[425px]" onInteractOutside={(e) => e.preventDefault()}>
           <DialogHeader>
             <DialogTitle>Daily Check-in</DialogTitle>
@@ -153,10 +150,9 @@ export function DailySupportQuestion() {
             )}
           </div>
            <DialogFooter>
-             <Button variant="ghost" onClick={() => setIsOpen(false)}>Skip for now</Button>
+             <Button variant="ghost" onClick={handleClose}>Skip for now</Button>
            </DialogFooter>
         </DialogContent>
       </Dialog>
-    </>
   );
 }
