@@ -4,11 +4,17 @@ import { useState } from 'react';
 import { Mood } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/use-auth';
-import { collection, addDoc, serverTimestamp, doc, updateDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase/firebase';
 import { useToast } from '@/hooks/use-toast';
+import { submitMood } from '@/lib/actions';
+import { Loader2 } from 'lucide-react';
 
-const moods: Mood[] = ['Happy', 'Sad', 'Anxious', 'Angry', 'Neutral'];
+const moods: { mood: Mood, emoji: string }[] = [
+    { mood: 'Happy', emoji: '😊' },
+    { mood: 'Sad', emoji: '😢' },
+    { mood: 'Anxious', emoji: '😟' },
+    { mood: 'Angry', emoji: '😡' },
+    { mood: 'Neutral', emoji: '😐' },
+];
 
 export function MoodTracker() {
   const { appUser } = useAuth();
@@ -16,55 +22,49 @@ export function MoodTracker() {
   const [selectedMood, setSelectedMood] = useState<Mood | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const submitMood = async () => {
+  const handleSubmitMood = async () => {
     if (!selectedMood || !appUser) return;
 
     setIsSubmitting(true);
-    try {
-      // Add to mood-logs collection
-      await addDoc(collection(db, 'mood-logs'), {
-        userId: appUser.uid,
-        mood: selectedMood,
-        date: serverTimestamp(),
-      });
-
-      // Update the latest mood on the user's document
-      const userRef = doc(db, 'users', appUser.uid);
-      await updateDoc(userRef, {
-        latestMood: {
-          mood: selectedMood,
-          date: serverTimestamp(),
-        },
-      });
-
+    const formData = new FormData();
+    formData.append('userId', appUser.uid);
+    formData.append('mood', selectedMood);
+    
+    const result = await submitMood(formData);
+    
+    if (result.success) {
       toast({ title: 'Mood Submitted', description: `You've selected ${selectedMood}.` });
       setSelectedMood(null);
-    } catch (error) {
+    } else {
       toast({ variant: 'destructive', title: 'Error', description: 'Failed to submit mood.' });
-    } finally {
-      setIsSubmitting(false);
     }
+    
+    setIsSubmitting(false);
   };
 
   return (
-    <div>
-      <div className="flex justify-center gap-4 mb-4">
-        {moods.map((mood) => (
+    <div className="space-y-4">
+      <div className="flex justify-around gap-2">
+        {moods.map(({ mood, emoji }) => (
           <Button
             key={mood}
             variant={selectedMood === mood ? 'default' : 'outline'}
+            size="icon"
+            className="text-2xl h-12 w-12 rounded-full"
             onClick={() => setSelectedMood(mood)}
+            aria-label={mood}
           >
-            {mood}
+            {emoji}
           </Button>
         ))}
       </div>
       <Button
-        onClick={submitMood}
+        onClick={handleSubmitMood}
         disabled={!selectedMood || isSubmitting}
         className="w-full"
       >
-        {isSubmitting ? 'Submitting...' : 'Submit Mood'}
+        {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+        Submit Mood
       </Button>
     </div>
   );

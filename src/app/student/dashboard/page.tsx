@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Book, HeartPulse, MessageSquare } from "lucide-react";
 import Link from "next/link";
-import { DailySupportQuestion } from "@/components/student/daily-support-question";
 
 export default function StudentDashboard() {
   return (
@@ -37,7 +36,7 @@ export default function StudentDashboard() {
               <CardDescription>How are you feeling today?</CardDescription>
             </CardHeader>
             <CardContent>
-              <DailySupportQuestion />
+              <MoodTracker />
             </CardContent>
           </Card>
            <Card>
