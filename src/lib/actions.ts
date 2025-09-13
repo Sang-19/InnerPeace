@@ -40,8 +40,8 @@ export async function addJournalEntry(formData: FormData) {
     }
 
     try {
-        await addDoc(collection(db, 'users', userId, 'journalEntries'), {
-            content,
+        await addDoc(collection(db, `users/${userId}/journalEntries`), {
+            content: content,
             date: serverTimestamp(),
         });
         revalidatePath('/student/journal');
@@ -120,7 +120,8 @@ export async function reportCommunityMessage(formData: FormData) {
         
         revalidatePath('/student/community');
         return { success: 'Message reported.' };
-    } catch (error) {
+    } catch (error)
+    {
         console.error(error);
         return { error: 'Failed to report message.' };
     }
