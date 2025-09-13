@@ -9,13 +9,12 @@ export default function SignUpPage() {
 
   return (
     <div className="w-full lg:grid lg:min-h-screen lg:grid-cols-2">
-       <div className="hidden bg-muted lg:block">
+       <div className="hidden bg-muted lg:block relative">
         {loginImage && (
           <Image
             src={loginImage.imageUrl}
-            alt="Inner_Peace-SignUp"
-            width="1920"
-            height="1080"
+            alt="A serene landscape for signup"
+            fill
             className="h-full w-full object-cover"
             data-ai-hint={loginImage.imageHint}
           />
@@ -27,7 +26,7 @@ export default function SignUpPage() {
             <Logo />
             <h1 className="text-3xl font-bold">Create an Account</h1>
             <p className="text-balance text-muted-foreground">
-              Enter your details below to create your account
+              Enter your details below to start your journey.
             </p>
           </div>
           <SignUpForm />
