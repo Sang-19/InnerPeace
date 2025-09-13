@@ -1,0 +1,19 @@
+{
+    "stories": [
+        {
+            "id": "story-1",
+            "title": "The Oak Tree and the Reed",
+            "content": "A mighty oak tree stood tall and proud, boasting of its strength to a humble reed. When a great storm came, the rigid oak was uprooted, while the flexible reed bent with the wind and survived. It taught me that strength isn't about being unyielding, but about knowing when to bend."
+        },
+        {
+            "id": "story-2",
+            "title": "A Moment of Quiet",
+            "content": "I was overwhelmed with deadlines and expectations. I felt like I was drowning. I stepped outside, closed my eyes, and just focused on my breath for five minutes. I didn't solve all my problems, but when I opened my eyes, the world seemed a little less chaotic. That small pause gave me the clarity to tackle one thing at a time."
+        },
+        {
+            "id": "story-3",
+            "title": "The Courage to Ask for Help",
+            "content": "For months, I pretended everything was fine. I wore a smile like armor. But inside, I was struggling. The hardest thing I ever did was admit to a friend that I wasn't okay. Their response wasn't judgment, but a simple, 'I'm here for you.' That conversation didn't fix everything, but it was the start of my healing. It showed me that vulnerability is not weakness, but the first step toward getting stronger."
+        }
+    ]
+}

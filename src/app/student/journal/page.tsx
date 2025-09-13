@@ -10,9 +10,11 @@ import { db } from '@/lib/firebase/firebase';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { Loader2, Book } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Loader2, Book, Search } from 'lucide-react';
 import { format } from 'date-fns';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { InspirationalStories } from '@/components/student/inspirational-stories';
 
 export default function JournalPage() {
   const { appUser } = useAuth();
@@ -21,6 +23,7 @@ export default function JournalPage() {
   const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     if (appUser) {
@@ -53,41 +56,58 @@ export default function JournalPage() {
     }
     setSubmitting(false);
   };
+  
+  const filteredEntries = entries.filter((entry) =>
+    entry.content.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>My Personal Journal</CardTitle>
-          <CardDescription>A private space for your thoughts and reflections.</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <Textarea
-            placeholder="What's on your mind today?"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            rows={6}
-          />
-          <Button onClick={handleSubmit} disabled={submitting}>
-            {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Save Entry
-          </Button>
-        </CardContent>
-      </Card>
+      <div className="grid gap-6 lg:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle>My Personal Journal</CardTitle>
+            <CardDescription>A private space for your thoughts and reflections.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <Textarea
+              placeholder="What's on your mind today?"
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              rows={6}
+            />
+            <Button onClick={handleSubmit} disabled={submitting}>
+              {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Save Entry
+            </Button>
+          </CardContent>
+        </Card>
+        <InspirationalStories />
+      </div>
 
       <Card>
         <CardHeader>
           <CardTitle>Past Entries</CardTitle>
+          <CardDescription>Search and review your previous journal entries.</CardDescription>
         </CardHeader>
         <CardContent>
+            <div className="relative mb-4">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                    placeholder="Search your journal..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-10"
+                />
+            </div>
           {loading ? (
             <div className="flex justify-center items-center h-40">
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
             </div>
-          ) : entries.length > 0 ? (
+          ) : filteredEntries.length > 0 ? (
             <ScrollArea className="h-[400px]">
               <div className="space-y-4 pr-6">
-                {entries.map((entry) => (
+                {filteredEntries.map((entry) => (
                   <div key={entry.id} className="p-4 rounded-lg border bg-card">
                     <p className="text-sm text-muted-foreground mb-2">
                       {entry.date ? format(new Date(entry.date.seconds * 1000), 'MMMM d, yyyy') : 'Just now'}
@@ -100,7 +120,9 @@ export default function JournalPage() {
           ) : (
             <div className="text-center text-muted-foreground py-10">
               <Book className="mx-auto h-12 w-12" />
-              <p className="mt-4">You haven't written any journal entries yet.</p>
+              <p className="mt-4">
+                {entries.length > 0 ? 'No entries match your search.' : "You haven't written any journal entries yet."}
+                </p>
             </div>
           )}
         </CardContent>
