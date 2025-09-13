@@ -98,4 +98,5 @@ export type Helpline = {
   name: string;
   contact: string;
   type: 'phone' | 'email' | 'chat';
+  url?: string;
 };

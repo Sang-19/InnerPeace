@@ -5,25 +5,29 @@
             "id": "1",
             "name": "National Suicide Prevention Lifeline",
             "contact": "988",
-            "type": "phone"
+            "type": "phone",
+            "url": "tel:988"
         },
         {
             "id": "2",
             "name": "Crisis Text Line",
             "contact": "Text HOME to 741741",
-            "type": "chat"
+            "type": "chat",
+            "url": "https://www.crisistextline.org/"
         },
         {
             "id": "3",
             "name": "The Trevor Project (for LGBTQ youth)",
             "contact": "1-866-488-7386",
-            "type": "phone"
+            "type": "phone",
+            "url": "tel:1-866-488-7386"
         },
         {
             "id": "4",
             "name": "University Counseling Center",
             "contact": "counseling@university.edu",
-            "type": "email"
+            "type": "email",
+            "url": "mailto:counseling@university.edu"
         }
     ]
 }
