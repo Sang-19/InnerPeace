@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -20,7 +21,7 @@ import { CardDescription } from '../ui/card';
 
 type MoodDataPoint = {
   date: string;
-  mood: number;
+  mood: number | null;
 };
 
 const moodMapping: Record<Mood, number> = {
@@ -59,6 +60,7 @@ export function WeeklyMoodGraph() {
   const { appUser } = useAuth();
   const [data, setData] = useState<MoodDataPoint[]>([]);
   const [loading, setLoading] = useState(true);
+  const [hasData, setHasData] = useState(false);
 
   useEffect(() => {
     if (appUser) {
@@ -84,16 +86,19 @@ export function WeeklyMoodGraph() {
             return format(day, 'MMM d');
         });
         
+        let dataFound = false;
         const processedData = last7Days.map(dayStr => {
             const logsForDay = moodLogs.filter(log => format(log.date, 'MMM d') === dayStr);
             if(logsForDay.length > 0) {
+                dataFound = true;
                 // Average mood for the day if multiple entries exist
                 const avgMood = logsForDay.reduce((acc, log) => acc + log.mood, 0) / logsForDay.length;
                  return { date: dayStr, mood: Math.round(avgMood) };
             }
-            return { date: dayStr, mood: 0 }; // Show 0 for days with no data
-        }).filter(d => d.mood > 0); // Only show days with entries
+            return { date: dayStr, mood: null };
+        });
 
+        setHasData(dataFound);
         setData(processedData);
         setLoading(false);
       });
@@ -110,17 +115,13 @@ export function WeeklyMoodGraph() {
     );
   }
 
-  if (data.length === 0) {
-    return (
-        <div className="h-[350px] w-full flex justify-center items-center">
-            <CardDescription>No mood data recorded in the last 7 days. Start your daily check-in!</CardDescription>
-        </div>
-    );
-  }
-
-
   return (
-    <div className="h-[350px] w-full">
+    <div className="h-[350px] w-full relative">
+        {!hasData && (
+            <div className="absolute inset-0 flex justify-center items-center z-10 pointer-events-none">
+                <CardDescription>No mood data recorded in the last 7 days. Start your daily check-in!</CardDescription>
+            </div>
+        )}
       <ResponsiveContainer width="100%" height="100%">
         <LineChart
           data={data}
@@ -152,7 +153,7 @@ export function WeeklyMoodGraph() {
           <Tooltip
             cursor={{ stroke: 'hsl(var(--primary))', strokeWidth: 2, strokeDasharray: '3 3' }}
             content={({ active, payload, label }) => {
-              if (active && payload && payload.length) {
+              if (active && payload && payload.length && payload[0].value !== null) {
                 const moodValue = payload[0].value as number;
                 const moodInfo = moodDisplay[moodValue - 1];
                 return (
