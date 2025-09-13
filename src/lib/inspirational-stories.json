@@ -1,19 +1,36 @@
+
 {
     "stories": [
         {
             "id": "story-1",
-            "title": "The Oak Tree and the Reed",
-            "content": "A mighty oak tree stood tall and proud, boasting of its strength to a humble reed. When a great storm came, the rigid oak was uprooted, while the flexible reed bent with the wind and survived. It taught me that strength isn't about being unyielding, but about knowing when to bend."
+            "title": "The Kintsugi Bowl",
+            "content": "There was a student who felt completely broken after failing a class that was critical for their major. They felt like a failure, a shattered piece of pottery that could never be whole again. They confided in an art professor, who told them about Kintsugi, the Japanese art of repairing broken ceramics with lacquer dusted or mixed with powdered gold. The professor explained, 'The breaks are not hidden. They are illuminated. The piece is more beautiful and resilient for having been broken.' The student realized that their failure wasn't an end, but a part of their story. It was a golden seam that added depth and character to their journey. They learned not to hide their scars but to see them as a source of strength and a testament to their ability to heal and grow."
         },
         {
             "id": "story-2",
-            "title": "A Moment of Quiet",
-            "content": "I was overwhelmed with deadlines and expectations. I felt like I was drowning. I stepped outside, closed my eyes, and just focused on my breath for five minutes. I didn't solve all my problems, but when I opened my eyes, the world seemed a little less chaotic. That small pause gave me the clarity to tackle one thing at a time."
+            "title": "The Two Wolves",
+            "content": "An old Cherokee chief was teaching his grandson about life. 'A fight is going on inside me,' he said to the boy. 'It is a terrible fight and it is between two wolves. One is evil – he is anger, envy, sorrow, regret, greed, arrogance, self-pity, guilt, resentment, inferiority, lies, false pride, superiority, and ego. The other is good – he is joy, peace, love, hope, serenity, humility, kindness, benevolence, empathy, generosity, truth, compassion, and faith. The same fight is going on inside you – and inside every other person, too.' The grandson thought about it for a minute and then asked his grandfather, 'Which wolf will win?' The old chief simply replied, 'The one you feed.'"
         },
         {
             "id": "story-3",
-            "title": "The Courage to Ask for Help",
-            "content": "For months, I pretended everything was fine. I wore a smile like armor. But inside, I was struggling. The hardest thing I ever did was admit to a friend that I wasn't okay. Their response wasn't judgment, but a simple, 'I'm here for you.' That conversation didn't fix everything, but it was the start of my healing. It showed me that vulnerability is not weakness, but the first step toward getting stronger."
+            "title_two": "The Gardener and the Seed",
+            "title": "The Gardener and the Seed",
+            "content": "A young writer stared at a blank page, overwhelmed by the massive research paper they had to complete. The deadline loomed, and the sheer size of the task was paralyzing. Their grandmother, a patient gardener, saw their distress. She handed them a single, tiny seed. 'You cannot make a garden bloom overnight,' she said. 'You start by planting one seed. You water it. You make sure it has sun. You do that every day. That's all you have to do today—plant one seed.' The writer understood. They stopped thinking about the final 20-page paper and instead focused on writing just one paragraph. The next day, they focused on finding three sources. By breaking the enormous task into small, manageable 'seeds,' the paralysis faded, and slowly but surely, their garden of work began to grow."
+        },
+        {
+            "id": "story-4",
+            "title": "The Mountain Climber's Rest",
+            "content": "A determined climber was obsessed with reaching the summit of a formidable mountain. She believed that success meant never stopping, never taking a break. She pushed herself relentlessly, ignoring her aching muscles and shortness of breath. Halfway up, she collapsed from exhaustion, unable to move. An older, more experienced climber found her and shared his water. 'You see the summit as the goal,' he said, 'but you forget that the journey is the climb. The strongest climbers are not those who never stop, but those who know when to rest. The rest is not a delay; it is part of the climb.' She learned that day that self-care and rest are not signs of weakness but essential strategies for reaching your goals and preserving your strength for the long journey ahead."
+        },
+        {
+            "id": "story-5",
+            "title": "The Echo in the Canyon",
+            "content": "A father took his young son hiking in the mountains. The son stumbled and, out of frustration, screamed, 'I hate you!' From across the canyon, he heard a voice echo back, 'I hate you!' Scared, the boy ran to his father, who then cupped his hands and shouted, 'You are wonderful!' The voice from the canyon echoed, 'You are wonderful!' The father explained, 'Son, that is life. It's an echo. It gives you back everything you say or do. Your life is not a coincidence; it's a reflection of you.' The boy learned a powerful lesson: the energy and attitude he put out into the world, whether kindness or anger, would inevitably find its way back to him. He realized he had the power to shape his own echo."
+        },
+        {
+            "id": "story-6",
+            "title": "The Weight of the Glass",
+            "content": "A psychology professor walked around a room while teaching stress management to an audience. She raised a glass of water and asked, 'How heavy is this glass of water?' Answers ranged from 8 ounces to 20 ounces. She replied, 'The absolute weight doesn’t matter. It depends on how long I hold it. If I hold it for a minute, it's not a problem. If I hold it for an hour, I'll have an ache in my arm. If I hold it for a day, my arm will feel numb and paralyzed. In each case, the weight of the glass doesn't change, but the longer I hold it, the heavier it becomes.' She continued, 'The stresses and worries in life are like this glass of water. Think about them for a while and nothing happens. Think about them a bit longer and they begin to hurt. And if you think about them all day long, you will feel paralyzed – incapable of doing anything.' The lesson was clear: remember to put the glass down."
         }
     ]
 }
