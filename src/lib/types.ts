@@ -66,6 +66,9 @@ export type Feedback = {
   message: string;
   date: Date;
   sentiment: 'Positive' | 'Neutral' | 'Negative';
+  // Optional fields for backward compatibility with old data format
+  rating?: number;
+  feedback?: string;
 };
 
 export type AdminTask = {
