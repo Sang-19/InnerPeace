@@ -12,7 +12,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'WellTrack',
+  title: 'InnerPeace',
   description: 'Digital Mental Health and Psychological Support System for Students',
 };
 
