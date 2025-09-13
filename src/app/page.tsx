@@ -31,7 +31,7 @@ export default function LoginPage() {
         {loginImage && (
           <Image
             src={loginImage.imageUrl}
-            alt="WellTrack-Login"
+            alt="Inner_Peace-Login"
             width="1920"
             height="1080"
             className="h-full w-full object-cover"

@@ -13,7 +13,7 @@ export default function SignUpPage() {
         {loginImage && (
           <Image
             src={loginImage.imageUrl}
-            alt="WellTrack-SignUp"
+            alt="Inner_Peace-SignUp"
             width="1920"
             height="1080"
             className="h-full w-full object-cover"

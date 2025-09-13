@@ -118,7 +118,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     <nav className="grid gap-2 text-lg font-medium">
       <Link href="#" className="flex items-center gap-2 text-lg font-semibold mb-4">
         <Logo />
-        <span className="sr-only">EduCare</span>
+        <span className="sr-only">Inner Peace</span>
       </Link>
       {adminNavItems.map((item) => (
         <Link

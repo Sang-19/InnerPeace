@@ -5,7 +5,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { ThemeProvider } from '@/components/shared/theme-provider';
 
 export const metadata: Metadata = {
-  title: 'WellTrack',
+  title: 'Inner Peace',
   description: 'Digital Mental Health and Psychological Support System for Students',
 };
 
