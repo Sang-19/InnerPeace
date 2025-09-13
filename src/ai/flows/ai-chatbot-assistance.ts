@@ -45,3 +45,30 @@ const aiChatbotAssistanceFlow = ai.defineFlow(
     return output!;
   }
 );
+
+// Book name correction schemas
+const BookNameCorrectionInputSchema = z.object({
+  bookQuery: z.string().describe('The book name or query from the user.'),
+});
+export type BookNameCorrectionInput = z.infer<typeof BookNameCorrectionInputSchema>;
+
+const BookNameCorrectionOutputSchema = z.object({
+  correctedName: z.string().describe('The corrected, exact book name.'),
+});
+export type BookNameCorrectionOutput = z.infer<typeof BookNameCorrectionOutputSchema>;
+
+// Gemini prompt for correction
+const bookNameCorrectionPrompt = ai.definePrompt({
+  name: 'bookNameCorrectionPrompt',
+  input: { schema: BookNameCorrectionInputSchema },
+  output: { schema: BookNameCorrectionOutputSchema },
+  prompt: `You are a helpful assistant. Given a possibly misspelled book name, return the exact correct book title. Only return the corrected book name.
+
+User query: {{{bookQuery}}}`,
+});
+
+// Correction flow
+export async function correctBookName(input: BookNameCorrectionInput): Promise<BookNameCorrectionOutput> {
+  const { output } = await bookNameCorrectionPrompt(input);
+  return output!;
+}

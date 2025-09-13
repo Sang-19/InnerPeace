@@ -58,13 +58,22 @@ export default function JournalPage() {
     setSubmitting(false);
   };
   
-  const handleExternalSearch = (e: React.FormEvent) => {
+  const handleExternalSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     if (externalSearchQuery.trim() === '') return;
-    // Replace spaces with hyphens or encode as needed
-    const bookSlug = encodeURIComponent(externalSearchQuery.trim().replace(/\s+/g, '-'));
+
+    // Call the API route to correct the book name
+    const res = await fetch('/api/correct-book-name', {
+      method: 'POST',
+      body: JSON.stringify({ bookQuery: externalSearchQuery }),
+      headers: { 'Content-Type': 'application/json' },
+    });
+    const { correctedName } = await res.json();
+
+    // Use the corrected name for your URL
+    const bookSlug = correctedName.trim().replace(/\s+/g, '-').toLowerCase();
     const url = `https://libtoon.com/p/${bookSlug}`;
-    window.open(url, '_blank'); // or use window.location.href = url; opens the link in a new browser tab 
+    window.open(url, '_blank');
   };
 
   const filteredEntries = entries.filter((entry) =>
