@@ -54,8 +54,10 @@ export default function StudentDashboard() {
       </div>
 
       {/* Debug Section - Remove this in production */}
+      {/* 
       <AuthStatus />
-      
+      */}
+            
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2 space-y-6">
           <Card>
