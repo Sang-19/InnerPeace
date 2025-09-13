@@ -91,13 +91,16 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
   );
 
   return (
-    <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
-      <div className="hidden border-r bg-card md:block">
+    <div className="flex min-h-screen">
+      {/* Sidebar */}
+      <aside className="fixed left-0 top-0 h-screen w-64 bg-sidebar z-30 border-r">
         <div className="flex h-full max-h-screen flex-col gap-2">
           <NavContent />
         </div>
-      </div>
-      <div className="flex flex-col">
+      </aside>
+
+      {/* Main Content */}
+      <main className="ml-64 flex-1 overflow-y-auto">
         <header className="flex h-14 items-center gap-4 border-b bg-card px-4 lg:h-[60px] lg:px-6">
           <Sheet>
             <SheetTrigger asChild>
@@ -120,7 +123,7 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
           <AI_Chatbot />
           <DailySupportQuestion />
         </main>
-      </div>
+      </main>
     </div>
   );
 }
