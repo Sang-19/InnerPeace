@@ -31,26 +31,6 @@ export async function sendEmergencyAlert(formData: FormData) {
   }
 }
 
-export async function submitMood(formData: FormData) {
-  const userId = formData.get('userId') as string;
-  const mood = formData.get('mood') as Mood;
-
-  if (!userId || !mood) {
-    return { error: 'User ID and mood are required.' };
-  }
-
-  try {
-    await addDoc(collection(db, 'users', userId, 'moodLogs'), {
-      mood,
-      date: serverTimestamp(),
-    });
-    revalidatePath('/student/dashboard');
-    return { success: 'Mood logged successfully.' };
-  } catch (error) {
-    return { error: 'Failed to log mood.' };
-  }
-}
-
 export async function addJournalEntry(formData: FormData) {
     const userId = formData.get('userId') as string;
     const content = formData.get('content') as string;
@@ -87,10 +67,22 @@ export async function sendCommunityMessage(formData: FormData) {
       message,
       timestamp: serverTimestamp(),
       isHarmful: analysis.isHarmful,
-      status: 'visible',
+      status: analysis.isHarmful ? 'reported' : 'visible',
     });
     
+    if (analysis.isHarmful) {
+       await addDoc(collection(db, 'community-reports'), {
+            messageId: 'N/A', // We don't have the doc ID yet, but can be updated later if needed.
+            studentId: senderId,
+            studentName: 'Anonymous',
+            message: message,
+            date: serverTimestamp(),
+            status: 'pending',
+        });
+    }
+
     revalidatePath('/student/community');
+
     if (analysis.isHarmful) {
       return { success: 'Message sent. Please be mindful of our community guidelines.', warning: true };
     }
@@ -131,4 +123,36 @@ export async function reportCommunityMessage(formData: FormData) {
         console.error(error);
         return { error: 'Failed to report message.' };
     }
+}
+
+export async function submitMood(formData: FormData) {
+  const userId = formData.get('userId') as string;
+  const mood = formData.get('mood') as Mood;
+
+  if (!userId || !mood) {
+    return { error: 'User ID and mood are required.' };
+  }
+
+  try {
+    // Add to mood-logs collection for historical tracking
+    await addDoc(collection(db, `users/${userId}/mood-logs`), {
+      mood,
+      date: serverTimestamp(),
+    });
+
+    // Update the latest mood on the user's document for quick access
+    const userRef = doc(db, 'users', userId);
+    await updateDoc(userRef, {
+      latestMood: {
+        mood,
+        date: serverTimestamp(),
+      },
+    });
+
+    revalidatePath('/student/dashboard');
+    return { success: 'Mood submitted successfully.' };
+  } catch (error) {
+    console.error('Error submitting mood:', error);
+    return { error: 'Failed to submit mood.' };
+  }
 }

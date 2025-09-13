@@ -7,10 +7,9 @@ import { generatePersonalizedQuestion, PersonalizedQuestionOutput } from '@/ai/f
 import { submitMood } from '@/lib/actions';
 import { Mood } from '@/lib/types';
 
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../ui/card';
 
 type QuizData = PersonalizedQuestionOutput;
 
@@ -22,27 +21,39 @@ export function DailySupportQuestion() {
   const [answers, setAnswers] = useState<Mood[]>([]);
   const { appUser } = useAuth();
   const { toast } = useToast();
+  const [quizCompleted, setQuizCompleted] = useState(false);
 
   useEffect(() => {
     async function fetchQuiz() {
       if (appUser) {
+        setLoading(true);
         try {
           const result = await generatePersonalizedQuestion({ studentName: appUser.name });
           setQuizData(result);
-          // Auto-open the quiz when data is loaded, you might want to add logic here
-          // to only show it once per day. For now, it shows on every page load.
           setIsOpen(true); 
+          setQuizCompleted(false);
+          setCurrentQuestionIndex(0);
+          setAnswers([]);
         } catch (error) {
           console.error("Failed to generate quiz:", error);
-          // Handle error, maybe show a default quiz or message
+          toast({ variant: 'destructive', title: "Couldn't load check-in", description: "There was an error generating your daily questions."});
         } finally {
           setLoading(false);
         }
       }
     }
 
-    fetchQuiz();
-  }, [appUser]);
+    // This is a placeholder for checking if the quiz has been taken today.
+    // In a real app, you would store this in Firestore or local storage.
+    const hasTakenQuizToday = false; 
+
+    if (!hasTakenQuizToday) {
+        fetchQuiz();
+    } else {
+        setLoading(false);
+        setQuizCompleted(true);
+    }
+  }, [appUser, toast]);
 
   const handleAnswer = (mood: Mood) => {
     const newAnswers = [...answers, mood];
@@ -51,7 +62,6 @@ export function DailySupportQuestion() {
     if (quizData && currentQuestionIndex < quizData.questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
-      // Quiz finished
       finishQuiz(newAnswers);
     }
   };
@@ -70,6 +80,7 @@ export function DailySupportQuestion() {
   const finishQuiz = async (finalAnswers: Mood[]) => {
     const finalMood = calculateFinalMood(finalAnswers);
     setIsOpen(false);
+    setQuizCompleted(true);
     
     if (appUser) {
         const formData = new FormData();
@@ -90,43 +101,24 @@ export function DailySupportQuestion() {
             });
         }
     }
-    
-    // Reset for next time
-    setCurrentQuestionIndex(0);
-    setAnswers([]);
   };
-
-  if (loading) {
-    return (
-       <Card>
-            <CardHeader>
-                <CardTitle>A Moment for You</CardTitle>
-                <CardDescription>Take a moment to reflect on your day.</CardDescription>
-            </CardHeader>
-            <CardContent>
-                <div className="flex items-center gap-2 text-muted-foreground">
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    <p>Loading your daily check-in...</p>
-                </div>
-            </CardContent>
-        </Card>
-    );
-  }
 
   const currentQuestion = quizData?.questions[currentQuestionIndex];
 
   return (
     <>
-      <Card>
-        <CardHeader>
-            <CardTitle>Daily Check-in</CardTitle>
-            <CardDescription>How are you feeling today?</CardDescription>
-        </CardHeader>
-        <CardContent>
+      {loading ? (
+        <div className="flex items-center gap-2 text-muted-foreground">
+          <Loader2 className="h-4 w-4 animate-spin" />
+          <p>Loading check-in...</p>
+        </div>
+      ) : quizCompleted ? (
+        <div>
             <p>You have completed today's check-in. Great job!</p>
-            <Button variant="outline" className="mt-4" onClick={() => setIsOpen(true)}>Retake Today's Check-in</Button>
-        </CardContent>
-      </Card>
+        </div>
+      ) : (
+        <Button onClick={() => setIsOpen(true)}>Start Daily Check-in</Button>
+      )}
     
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="sm:max-w-[425px]" onInteractOutside={(e) => e.preventDefault()}>
@@ -145,7 +137,7 @@ export function DailySupportQuestion() {
                     <Button
                       key={index}
                       variant="outline"
-                      className="h-auto py-3 whitespace-normal justify-start"
+                      className="h-auto py-3 whitespace-normal justify-start text-left"
                       onClick={() => handleAnswer(option.mood)}
                     >
                       {option.text}
@@ -154,12 +146,15 @@ export function DailySupportQuestion() {
                 </div>
               </div>
             ) : (
-                <div className="flex items-center justify-center gap-2 text-muted-foreground">
+                <div className="flex items-center justify-center gap-2 text-muted-foreground h-40">
                     <Loader2 className="h-6 w-6 animate-spin" />
                     <p>Generating your questions...</p>
                 </div>
             )}
           </div>
+           <DialogFooter>
+             <Button variant="ghost" onClick={() => setIsOpen(false)}>Skip for now</Button>
+           </DialogFooter>
         </DialogContent>
       </Dialog>
     </>

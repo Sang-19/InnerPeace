@@ -30,6 +30,10 @@ export type AppUser = {
 export type Student = AppUser & {
   role: 'student';
   progress?: number;
+  latestMood?: {
+    mood: Mood;
+    date: Date;
+  };
 };
 
 export type Admin = AppUser & {

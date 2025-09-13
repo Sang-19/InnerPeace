@@ -1,12 +1,12 @@
-import { ReportList } from '@/components/admin/report-list';
+import { CommunityReports } from '@/components/admin/community-reports';
 
 export default function ReportsPage() {
   return (
     <div>
-      <h1 className="text-2xl font-bold">Reports</h1>
-      <p className="text-muted-foreground">View and manage all user-generated reports.</p>
+      <h1 className="text-2xl font-bold">Community Reports</h1>
+      <p className="text-muted-foreground">Review and manage reports from the community chat.</p>
       <div className="mt-6">
-        <ReportList />
+        <CommunityReports />
       </div>
     </div>
   );

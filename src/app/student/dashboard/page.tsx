@@ -1,10 +1,11 @@
-import { DailyCheckIn } from "@/components/student/daily-check-in";
+import { MoodTracker } from "@/components/student/mood-tracker";
 import { EmergencyAlertButton } from "@/components/student/emergency-alert-button";
 import { WeeklyMoodGraph } from "@/components/student/weekly-mood-graph";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Book, HeartPulse } from "lucide-react";
+import { Book, HeartPulse, MessageSquare } from "lucide-react";
 import Link from "next/link";
+import { DailySupportQuestion } from "@/components/student/daily-support-question";
 
 export default function StudentDashboard() {
   return (
@@ -30,7 +31,15 @@ export default function StudentDashboard() {
           </Card>
         </div>
         <div className="lg:col-span-1 space-y-6">
-           <DailyCheckIn />
+           <Card>
+            <CardHeader>
+              <CardTitle>Daily Check-in</CardTitle>
+              <CardDescription>How are you feeling today?</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <DailySupportQuestion />
+            </CardContent>
+          </Card>
            <Card>
             <CardHeader>
               <CardTitle>Quick Access</CardTitle>
@@ -46,6 +55,12 @@ export default function StudentDashboard() {
                 <Button variant="outline" className="w-full justify-start">
                   <HeartPulse className="mr-2 h-4 w-4" />
                   Relaxation Exercises
+                </Button>
+              </Link>
+              <Link href="/student/feedback">
+                <Button variant="outline" className="w-full justify-start">
+                  <MessageSquare className="mr-2 h-4 w-4" />
+                  Submit Feedback
                 </Button>
               </Link>
             </CardContent>

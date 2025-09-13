@@ -1,13 +1,19 @@
-import { FeedbackList } from '@/components/admin/feedback-list';
+import { FeedbackList } from "@/components/shared/feedback/feedback-list";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function FeedbackPage() {
   return (
-    <div>
-      <h1 className="text-2xl font-bold">Feedback</h1>
-      <p className="text-muted-foreground">View and manage all user feedback.</p>
-      <div className="mt-6">
-        <FeedbackList />
-      </div>
+    <div className="flex flex-col gap-6">
+        <h1 className="text-2xl font-bold">Student Feedback</h1>
+        <Card>
+            <CardHeader>
+                <CardTitle>Recent Submissions</CardTitle>
+                <CardDescription>Browse through the latest feedback submitted by students.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <FeedbackList />
+            </CardContent>
+        </Card>
     </div>
   );
 }

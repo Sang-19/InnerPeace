@@ -12,7 +12,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Student } from '@/lib/types';
-import { collection, getDocs, onSnapshot } from 'firebase/firestore';
+import { collection, onSnapshot } from 'firebase/firestore';
 import { db } from '@/lib/firebase/firebase';
 import { Loader2, TrendingUp } from 'lucide-react';
 
@@ -73,8 +73,13 @@ export function StudentList() {
             <TableCell>{student.name}</TableCell>
             <TableCell>{student.email}</TableCell>
             <TableCell>
-              {/* This is a placeholder for current mood */}
-              <Badge variant={getMoodBadgeVariant('Neutral')}>Neutral</Badge>
+              {student.latestMood ? (
+                <Badge variant={getMoodBadgeVariant(student.latestMood.mood)}>
+                  {student.latestMood.mood}
+                </Badge>
+              ) : (
+                <Badge variant="secondary">No mood recorded</Badge>
+              )}
             </TableCell>
             <TableCell>
               <Button variant="outline" size="sm">
