@@ -15,7 +15,7 @@ import { Eye } from 'lucide-react';
 const feedback = [
   {
     id: '1',
-    studentName: 'John Doe',
+    studentName: 'Your name',
     date: '2023-10-27',
     rating: 5,
   },

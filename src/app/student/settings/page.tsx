@@ -23,11 +23,11 @@ export default function SettingsPage() {
         <CardContent className="space-y-4">
           <div className="grid gap-2">
             <Label htmlFor="name">Name</Label>
-            <Input id="name" defaultValue="John Doe" />
+            <Input id="name" defaultValue="Your name" />
           </div>
           <div className="grid gap-2">
             <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" defaultValue="john.doe@example.com" disabled />
+            <Input id="email" type="email" defaultValue="email@domain" disabled />
           </div>
            <div className="grid gap-2">
             <Label htmlFor="contact">Emergency Contact (Phone)</Label>
