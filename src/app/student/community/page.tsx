@@ -30,8 +30,10 @@ export default function CommunityPage() {
       const msgs: CommunityMessage[] = [];
       snapshot.forEach((doc) => {
         const data = doc.data();
-        // Only show visible messages
-        if (data.status === 'visible') {
+        // Show all messages except those hidden by admin approval
+        // This includes 'visible', 'reported' (still visible until admin review)
+        // But excludes 'hidden' (admin-approved for removal)
+        if (data.status !== 'hidden') {
            msgs.push({ id: doc.id, ...data } as CommunityMessage);
         }
       });

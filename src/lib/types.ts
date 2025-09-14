@@ -55,8 +55,11 @@ export type CommunityReport = {
   studentName: string;
   message: string;
   date: Date;
-  status: 'pending' | 'reviewed';
+  status: 'pending' | 'approved' | 'rejected';
   messageId: string;
+  reviewedBy?: string;
+  reviewedAt?: Date;
+  adminComment?: string;
 };
 
 export type Feedback = {

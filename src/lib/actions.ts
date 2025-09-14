@@ -155,8 +155,9 @@ export async function reportCommunityMessage(formData: FormData) {
     }
 
     try {
-        const messageRef = doc(db, 'community-chat', messageId);
-        await updateDoc(messageRef, { status: 'reported' });
+        // Don't change message status immediately - let it remain visible until admin review
+        // const messageRef = doc(db, 'community-chat', messageId);
+        // await updateDoc(messageRef, { status: 'reported' });
 
         await addDoc(collection(db, 'community-reports'), {
             messageId,
@@ -166,14 +167,97 @@ export async function reportCommunityMessage(formData: FormData) {
             date: serverTimestamp(),
             status: 'pending',
         });
+
+        // Create notification for admins about new report
+        const adminUsers = await getDocs(
+            query(collection(db, 'users'), where('role', '==', 'admin'))
+        );
+
+        if (adminUsers.docs.length > 0) {
+            const notifications = adminUsers.docs.map((adminDoc) => {
+                return addDoc(collection(db, 'notifications'), {
+                    userId: adminDoc.id,
+                    type: 'community_report',
+                    title: 'New Community Report',
+                    message: `A message has been reported in the community chat and needs review.`,
+                    read: false,
+                    relatedId: messageId,
+                    timestamp: serverTimestamp(),
+                });
+            });
+            await Promise.all(notifications);
+        }
         
         revalidatePath('/student/community');
-        return { success: 'Message reported.' };
+        revalidatePath('/admin/reports');
+        return { success: 'Message reported and sent for admin review.' };
     } catch (error)
     {
         console.error(error);
         return { error: 'Failed to report message.' };
     }
+}
+
+export async function approveReportedMessage(formData: FormData) {
+  const reportId = formData.get('reportId') as string;
+  const messageId = formData.get('messageId') as string;
+  const adminId = formData.get('adminId') as string;
+  const adminName = formData.get('adminName') as string;
+  const adminComment = formData.get('adminComment') as string;
+
+  if (!reportId || !messageId || !adminId || !adminName) {
+    return { success: false, error: 'Missing required information.' };
+  }
+
+  try {
+    // Update the report status to approved
+    const reportRef = doc(db, 'community-reports', reportId);
+    await updateDoc(reportRef, {
+      status: 'approved',
+      reviewedBy: adminName,
+      reviewedAt: serverTimestamp(),
+      adminComment: adminComment || 'Message approved for removal',
+    });
+
+    // Hide the message by updating its status
+    const messageRef = doc(db, 'community-chat', messageId);
+    await updateDoc(messageRef, { status: 'hidden' });
+
+    revalidatePath('/admin/reports');
+    revalidatePath('/student/community');
+    return { success: true, message: 'Report approved and message hidden successfully.' };
+  } catch (error) {
+    console.error('Error approving report:', error);
+    return { success: false, error: 'Failed to approve report.' };
+  }
+}
+
+export async function rejectReportedMessage(formData: FormData) {
+  const reportId = formData.get('reportId') as string;
+  const adminId = formData.get('adminId') as string;
+  const adminName = formData.get('adminName') as string;
+  const adminComment = formData.get('adminComment') as string;
+
+  if (!reportId || !adminId || !adminName) {
+    return { success: false, error: 'Missing required information.' };
+  }
+
+  try {
+    // Update the report status to rejected
+    const reportRef = doc(db, 'community-reports', reportId);
+    await updateDoc(reportRef, {
+      status: 'rejected',
+      reviewedBy: adminName,
+      reviewedAt: serverTimestamp(),
+      adminComment: adminComment || 'Report was not valid - message remains visible',
+    });
+
+    revalidatePath('/admin/reports');
+    return { success: true, message: 'Report rejected successfully. Message remains visible.' };
+  } catch (error) {
+    console.error('Error rejecting report:', error);
+    return { success: false, error: 'Failed to reject report.' };
+  }
 }
 
 export async function resolveEmergencyAlert(formData: FormData) {
